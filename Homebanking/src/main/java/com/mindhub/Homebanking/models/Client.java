@@ -16,6 +16,9 @@ public class Client {
 
     @OneToMany(mappedBy ="client", fetch = FetchType.EAGER)
     Set<Account> accounts = new HashSet<>();
+    // The "accounts" property represents a one-to-many relationship with the "Account" entity.
+    // This establishes that a customer can have multiple accounts.
+    // "fetch = FetchType.EAGER" indicates that accounts will be loaded automatically when the client is accessed.
 
     private String firstName;
     private String lastName;
@@ -70,9 +73,12 @@ public class Client {
         return accounts;
     }
 
-    public void addAccounts(Account account){
-        account.setClient(this);
-        accounts.add(account);
+    public void addAccount(Account account){
+        // Establishes the bidirectional relationship between the client and the account.
+        // The "account" argument represents the account to be added to the client
+
+        account.setClient(this); // Sets the client's customer as the current customer (this).
+        accounts.add(account);// Add the account to the set of accounts associated with the client.
     }
 
 
