@@ -1,5 +1,7 @@
 package com.mindhub.Homebanking.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -57,6 +59,7 @@ public class Account {
         this.balance = balance;
     }
 
+    @JsonIgnore //bad practice, there are other ways to fix it, change for DTO design pattern...
     public Client getClient() {
         return client;
     }
