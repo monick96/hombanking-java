@@ -28,11 +28,10 @@ public class Account {
     }
 
     // Constructor with parameters to initialize all attributes
-    public Account(String number, LocalDate creationDate, double balance, Client client) {
-        this.number = number;
-        this.creationDate = creationDate;
-        this.balance = balance;
-        this.client = client;
+
+
+    public Long getId() {
+        return id;
     }
 
     public String getNumber() {

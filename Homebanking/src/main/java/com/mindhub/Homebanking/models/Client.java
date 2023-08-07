@@ -1,6 +1,6 @@
 package com.mindhub.Homebanking.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mindhub.Homebanking.dtos.AccountDTO;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -45,6 +45,9 @@ public class Client {
     // Getters and setters for attributes - accessor methods
 
 
+    public Long getId() {
+        return id;
+    }
     public String getFirstName() {
         return firstName;
     }

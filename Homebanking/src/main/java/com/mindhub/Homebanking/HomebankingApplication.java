@@ -21,15 +21,17 @@ public class HomebankingApplication {
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository){
 		return (args -> {
+
 			Client client1 = new Client();
-			client1.setFirstName("Javier");
-			client1.setLastName("Miller");
-			client1.setEmail("miller@mail.com");
+			client1.setFirstName("Melba");
+			client1.setLastName("Morel");
+			client1.setEmail("melba@mindhub.com");
 
 			Client client2 = new Client();
-			client2.setFirstName("Melba");
-			client2.setLastName("Morel");
-			client2.setEmail("melba@mindhub.com");
+			client2.setFirstName("Javier");
+			client2.setLastName("Miller");
+			client2.setEmail("miller@mail.com");
+
 
 
 			//Saving clients
@@ -59,9 +61,9 @@ public class HomebankingApplication {
 
 
 			//addAccount method - Establishing relationships
-			client2.addAccount(account1);
-			client2.addAccount(account2);
-			client1.addAccount(account3);
+			client1.addAccount(account1);
+			client1.addAccount(account2);
+			client2.addAccount(account3);
 
 			// Saving accounts
 			accountRepository.save(account1);

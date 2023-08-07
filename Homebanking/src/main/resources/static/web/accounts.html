@@ -79,13 +79,13 @@
                             <h2 class="display-6 subtitle">Accounts</h2>
                         </div>
                         <div class="row mx-2">
-                            <div v-for="{id, number, date, balance} in clientInfo.accounts"
+                            <div v-for="{id, number, creationDate, balance} in clientInfo.accounts"
                                 class="col-12 col-md-4 mt-2 ">
                                 <a class="account-link" v-bind:href="'/web/account.html?id='+id">
                                     <div class="card border-0 account">
                                         <div class="card-body">
                                             <h5 class="card-title">{{ number }}</h5>
-                                            <p class="card-text"> {{ formatDate(date) }}</p>
+                                            <p class="card-text"> {{ formatDate(creationDate) }}</p>
                                             <p class="text-center lead account-balance"> ${{ balance }} </p>
                                         </div>
                                     </div>
