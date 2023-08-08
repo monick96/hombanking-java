@@ -10,7 +10,7 @@ Homebanking Demo project for Spring Boot, (Spring Data JPA, H2 database, Spring 
 
 - Being able to see the list of clients from the web service [http://localhost:8080/clients](http://localhost:8080/clients)
 
-#Task2
+# Task2
 The objectives of this task2 were:
 * Create both back-end and front-end code of the elements to create are:
   - Code for the Account entity and the test data
