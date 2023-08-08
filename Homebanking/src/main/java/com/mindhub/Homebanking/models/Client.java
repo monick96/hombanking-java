@@ -1,11 +1,10 @@
 package com.mindhub.Homebanking.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mindhub.Homebanking.dtos.AccountDTO;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Client {
@@ -14,6 +13,13 @@ public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Uses an automatic ID generation strategy
     private Long id;
+
+    @OneToMany(mappedBy ="client", fetch = FetchType.EAGER)
+    Set<Account> accounts = new HashSet<>();
+    // The "accounts" property represents a one-to-many relationship with the "Account" entity.
+    // This establishes that a customer can have multiple accounts.
+    // "fetch = FetchType.EAGER" indicates that accounts will be loaded automatically when the client is accessed.
+
     private String firstName;
     private String lastName;
 
@@ -39,6 +45,9 @@ public class Client {
     // Getters and setters for attributes - accessor methods
 
 
+    public Long getId() {
+        return id;
+    }
     public String getFirstName() {
         return firstName;
     }
@@ -62,4 +71,18 @@ public class Client {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void addAccount(Account account){
+        // Establishes the bidirectional relationship between the client and the account.
+        // The "account" argument represents the account to be added to the client
+
+        account.setClient(this); // Sets the client's customer as the current customer (this).
+        accounts.add(account);// Add the account to the set of accounts associated with the client.
+    }
+
+
 }
