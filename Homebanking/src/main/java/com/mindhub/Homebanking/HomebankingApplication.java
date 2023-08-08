@@ -36,21 +36,23 @@ public class HomebankingApplication {
 			//javier's account
 			Account account3 = new Account("VIN003",LocalDate.now().plusDays(5),75000.0);
 
+			//Saving clients
+			clientRepository.save(client1);
+			clientRepository.save(client2);
 
 			//addAccount method - Establishing relationships
 			client1.addAccount(account1);
 			client1.addAccount(account2);
 			client2.addAccount(account3);
 
-			//Saving clients
-			clientRepository.save(client1);
-			clientRepository.save(client2);
-
-
 			// Saving accounts
 			accountRepository.save(account1);
 			accountRepository.save(account2);
 			accountRepository.save(account3);
+
+			//Saving clients
+			clientRepository.save(client1);
+			clientRepository.save(client2);
 
 		});
 	}
