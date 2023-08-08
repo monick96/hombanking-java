@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
+
 
 public class ClientDTO {
     //properties
@@ -27,10 +29,10 @@ public class ClientDTO {
 
         this.id = client.getId();
         // Create a new HashSet instance and add each AccountDTO
-        this.accounts = new HashSet<>();
-        for (Account account : client.getAccounts()) {
-            this.accounts.add(new AccountDTO(account));
-        }
+        this.accounts = client.getAccounts()
+                .stream()
+                .map(account -> new AccountDTO(account))
+                .collect(toSet());
 
         this.firstName = client.getFirstName();
 
@@ -54,24 +56,12 @@ public class ClientDTO {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
 }

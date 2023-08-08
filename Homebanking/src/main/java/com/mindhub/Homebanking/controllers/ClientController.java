@@ -24,14 +24,14 @@ public class ClientController {
         return clientRepository
                 .findAll()
                 .stream()
-                .map(ClientDTO::new)//o -> map(client -> new ClientDTO(client))
+                .map(client -> new ClientDTO(client))//o -> map(ClientDTO::new)
                 .collect(toList());
 
     }
     @RequestMapping("/clients/{id}")
     public ClientDTO getClient(@PathVariable Long id) {
         return clientRepository.findById(id)
-                .map(ClientDTO::new)
+                .map(client -> new ClientDTO(client))
                 .orElse(null);
     }
 }

@@ -29,6 +29,11 @@ public class Account {
 
     // Constructor with parameters to initialize all attributes
 
+    public Account(String number, LocalDate creationDate, double balance) {
+        this.number = number;
+        this.creationDate = creationDate;
+        this.balance = balance;
+    }
 
     public Long getId() {
         return id;
@@ -58,8 +63,9 @@ public class Account {
         this.balance = balance;
     }
 
-    @JsonIgnore //bad practice, there are other ways to fix it, change for DTO design pattern...
+    //@JsonIgnore //bad practice, there are other ways to fix it, change for DTO design pattern...
     public Client getClient() {
+
         return client;
     }
 
