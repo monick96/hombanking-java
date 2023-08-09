@@ -29,10 +29,7 @@ public class Client {
 
     // Parameterless constructor
     public Client() {
-        // Default values or common initial values
-        this.firstName = "";
-        this.lastName = "";
-        this.email = "";
+
     }
 
     // Constructor with parameters to initialize all attributes

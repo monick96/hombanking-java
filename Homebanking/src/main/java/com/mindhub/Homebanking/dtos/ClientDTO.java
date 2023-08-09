@@ -2,6 +2,7 @@ package com.mindhub.Homebanking.dtos;
 
 import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
+import com.mindhub.Homebanking.models.Transaction;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +16,7 @@ public class ClientDTO {
     //properties
     private Long id;
     Set<AccountDTO> accounts = new HashSet<>();
+
     private String firstName;
     private String lastName;
     private String email;
@@ -26,7 +28,6 @@ public class ClientDTO {
     }
 
     public ClientDTO(Client client) {
-
         this.id = client.getId();
         // Create a new HashSet instance and add each AccountDTO
         this.accounts = client.getAccounts()

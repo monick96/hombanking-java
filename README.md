@@ -16,3 +16,10 @@ The objectives of this task2 were:
   - Code for the Account entity and the test data
   - Code to create an application controller that returns a JSON with the information of the Client and its associated accounts.
   - HTML, CSS and Javascript code that displays the information in a user-readable way.
+
+# Task3
+The objectives of this task3 were:
+- Create the Transaction entity with the fields indicated in the model and create its repository.
+- Java code to create an Account controller that returns all accounts and a particular account.
+- A web page that shows the information of the account and the list of transactions of the same.
+
