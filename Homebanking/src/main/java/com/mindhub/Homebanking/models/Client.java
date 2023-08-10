@@ -4,6 +4,7 @@ import com.mindhub.Homebanking.dtos.AccountDTO;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,9 @@ public class Client {
     // The "accounts" property represents a one-to-many relationship with the "Account" entity.
     // This establishes that a customer can have multiple accounts.
     // "fetch = FetchType.EAGER" indicates that accounts will be loaded automatically when the client is accessed.
+
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private List<ClientLoan> clientLoans;
 
     private String firstName;
     private String lastName;

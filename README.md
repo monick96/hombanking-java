@@ -23,3 +23,12 @@ The objectives of this task3 were:
 - Java code to create an Account controller that returns all accounts and a particular account.
 - A web page that shows the information of the account and the list of transactions of the same.
 
+# Task4
+The objectives of this task3 were:
+- Create the Loan entity and the repository
+- Create the test data
+- Test automatic REST services
+- Create the ClientLoan entity and the repository
+- Modify the account view to show loans
+
+
