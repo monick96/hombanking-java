@@ -1,5 +1,8 @@
 package com.mindhub.Homebanking.models;
 
+import net.bytebuddy.asm.Advice;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +13,7 @@ public class Loan {
     //properties
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Uses an automatic ID generation strategy
+    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private String name;
     private  double maxAmount;
@@ -22,8 +26,6 @@ public class Loan {
 //    private List<ClientLoan> clientLoans;
 
     //constructors
-
-
     public Loan() {
     }
 
@@ -64,3 +66,4 @@ public class Loan {
         this.payments = payments;
     }
 }
+

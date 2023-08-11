@@ -1,6 +1,7 @@
 package com.mindhub.Homebanking.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ public class Account {
     //properties
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Uses an automatic ID generation strategy
+    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private String number;
     private LocalDate creationDate;
@@ -26,7 +28,7 @@ public class Account {
     // Establishes a one-to-many relationship between the Account entity and the Transaction entity.
     // The "mappedBy" attribute indicates that the relationship is mapped by the "account" field in the Transaction entity.
     @OneToMany(mappedBy ="account", fetch = FetchType.EAGER)
-    Set<Transaction> transactions = new HashSet<>();
+    private Set<Transaction> transactions = new HashSet<>();
 
     //Methods
     //class constructors

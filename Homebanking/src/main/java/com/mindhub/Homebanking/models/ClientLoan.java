@@ -1,11 +1,14 @@
 package com.mindhub.Homebanking.models;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 @Entity
 public class ClientLoan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
     @ManyToOne
@@ -17,7 +20,6 @@ public class ClientLoan {
     private Loan loan;
 
     //constructor
-
     public ClientLoan() {
         // Empty constructor required by JPA
     }

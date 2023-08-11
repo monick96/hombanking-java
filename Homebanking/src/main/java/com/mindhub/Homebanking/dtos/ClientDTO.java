@@ -10,23 +10,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
-
-
 public class ClientDTO {
     //properties
     private Long id;
-    Set<AccountDTO> accounts = new HashSet<>();
-
+    private Set<AccountDTO> accounts = new HashSet<>();
     private String firstName;
     private String lastName;
     private String email;
 
     //class constructors
-
-
-    public ClientDTO() {
-    }
-
+    public ClientDTO() {}
     public ClientDTO(Client client) {
         this.id = client.getId();
         // Create a new HashSet instance and add each AccountDTO
@@ -34,33 +27,24 @@ public class ClientDTO {
                 .stream()
                 .map(account -> new AccountDTO(account))
                 .collect(toSet());
-
         this.firstName = client.getFirstName();
-
         this.lastName = client.getLastName();
-
         this.email = client.getEmail();
-
     }
 
     // Getters and setters
-
     public Long getId() {
         return id;
     }
-
     public Set<AccountDTO> getAccounts() {
         return accounts;
     }
-
     public String getFirstName() {
         return firstName;
     }
-
     public String getLastName() {
         return lastName;
     }
-
     public String getEmail() {
         return email;
     }

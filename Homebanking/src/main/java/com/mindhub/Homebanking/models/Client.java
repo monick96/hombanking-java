@@ -1,6 +1,7 @@
 package com.mindhub.Homebanking.models;
 
 import com.mindhub.Homebanking.dtos.AccountDTO;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -13,10 +14,11 @@ public class Client {
     //properties
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Uses an automatic ID generation strategy
+    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
     @OneToMany(mappedBy ="client", fetch = FetchType.EAGER)
-    Set<Account> accounts = new HashSet<>();
+    private Set<Account> accounts = new HashSet<>();
     // The "accounts" property represents a one-to-many relationship with the "Account" entity.
     // This establishes that a customer can have multiple accounts.
     // "fetch = FetchType.EAGER" indicates that accounts will be loaded automatically when the client is accessed.
@@ -44,8 +46,6 @@ public class Client {
     }
 
     // Getters and setters for attributes - accessor methods
-
-
     public Long getId() {
         return id;
     }
