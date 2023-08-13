@@ -4,6 +4,7 @@ import net.bytebuddy.asm.Advice;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,10 +21,10 @@ public class Loan {
 
     @ElementCollection
     @Column(name="payments")
-    private Set<Integer> payments;
+    private List<Integer> payments = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    private List<ClientLoan> clientLoans;
+    @OneToMany(mappedBy = "loan", fetch = FetchType.EAGER)
+    private Set<ClientLoan> clientLoans= new HashSet<>();
 
     //constructors
     public Loan() {
@@ -35,10 +36,19 @@ public class Loan {
 
     }
 
-    public Loan(String name, double maxAmount, Set<Integer> payments) {
+    public Loan(String name, double maxAmount, List<Integer> payments) {
         this.name = name;
         this.maxAmount = maxAmount;
         this.payments = payments;
+    }
+
+    //accessors
+    public Long getId() {
+        return id;
+    }
+
+    public Set<ClientLoan> getClientLoans() {
+        return clientLoans;
     }
 
     public String getName() {
@@ -57,13 +67,17 @@ public class Loan {
         this.maxAmount = maxAmount;
     }
 
-    public Set<Integer> getPayments() {
+    public List<Integer> getPayments() {
         return payments;
     }
 
-
-    public void setPayments(Set<Integer> payments) {
+    public void setPayments(List<Integer> payments) {
         this.payments = payments;
+    }
+
+    public void addClientLoan(ClientLoan clientLoan){
+        clientLoan.setLoan(this);
+        clientLoans.add(clientLoan);
     }
 }
 

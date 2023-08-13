@@ -11,25 +11,48 @@ public class ClientLoan {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "loan_id")
     private Loan loan;
 
+    private int payments;
+
+    private double amount;
+
     //constructor
     public ClientLoan() {
-        // Empty constructor required by JPA
     }
 
-    public ClientLoan(Client client, Loan loan) {
+    public ClientLoan(double amount, int payments) {
+        this.amount = amount;
+        this.payments = payments;
+    }
+
+    public ClientLoan(Client client, Loan loan, int payments, long amount) {
         this.client = client;
         this.loan = loan;
+        this.payments = payments;
+        this.amount = amount;
     }
 
-    //getters
+    //accessors
+
+    public int getPayments() {
+        return payments;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
     public Long getId() {
         return id;
     }
@@ -40,5 +63,20 @@ public class ClientLoan {
 
     public Loan getLoan() {
         return loan;
+    }
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public void setLoan(Loan loan) {
+        this.loan = loan;
+    }
+
+    public void setPayments(int payments) {
+        this.payments = payments;
+    }
+
+    public void setAmount(long amount) {
+        this.amount = amount;
     }
 }

@@ -4,6 +4,7 @@ import com.mindhub.Homebanking.dtos.AccountDTO;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,14 +18,15 @@ public class Client {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
-    @OneToMany(mappedBy ="client", fetch = FetchType.EAGER)
-    private Set<Account> accounts = new HashSet<>();
     // The "accounts" property represents a one-to-many relationship with the "Account" entity.
     // This establishes that a customer can have multiple accounts.
     // "fetch = FetchType.EAGER" indicates that accounts will be loaded automatically when the client is accessed.
+    @OneToMany(mappedBy ="client", fetch = FetchType.EAGER)
+    private Set<Account> accounts = new HashSet<>();
 
+    //one-to-many relationship between client and loan
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
-    private List<ClientLoan> clientLoans;
+    private Set<ClientLoan> clientLoans = new HashSet<>();
 
     private String firstName;
     private String lastName;
@@ -46,6 +48,11 @@ public class Client {
     }
 
     // Getters and setters for attributes - accessor methods
+
+    public Set<ClientLoan> getClientLoans() {
+        return clientLoans;
+    }
+
     public Long getId() {
         return id;
     }
@@ -83,6 +90,11 @@ public class Client {
 
         account.setClient(this); // Sets the client's customer as the current customer (this).
         accounts.add(account);// Add the account to the set of accounts associated with the client.
+    }
+
+    public void addClientLoan(ClientLoan clientLoan){
+        clientLoan.setClient(this);
+        clientLoans.add(clientLoan);
     }
 
 
