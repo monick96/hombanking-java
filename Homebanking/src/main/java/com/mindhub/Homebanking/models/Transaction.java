@@ -1,5 +1,7 @@
 package com.mindhub.Homebanking.models;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -8,6 +10,7 @@ public class Transaction {
     //properties
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Uses an automatic ID generation strategy
+    @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
     private TransactionType type; // enum
