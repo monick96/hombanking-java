@@ -22,7 +22,7 @@ public class HomebankingApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository){
+	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
 		return (args -> {
 			//creating client instances
 			Client client1 = new Client("Melba","Morel","melba@mindhub.com");
@@ -64,10 +64,14 @@ public class HomebankingApplication {
 			ClientLoan clientLoan3= new ClientLoan(100000,24);
 			ClientLoan clientLoan4 = new ClientLoan(200000,36);
 
-
 			//Saving clients
 			clientRepository.save(client1);
 			clientRepository.save(client2);
+
+			//card object for Melba
+			Card card1 = new Card(CardType.DEBIT,CardColor.GOLD,"8043275912834567",LocalDate.now(),LocalDate.now().plusYears(5), "123",client1.getFirstName() + " " + client1.getLastName());
+			Card card2 = new Card(CardType.CREDIT,CardColor.TITANIUM,"8042275912834563",LocalDate.now(),LocalDate.now().plusYears(5), "321",client1.getFirstName() + " " + client1.getLastName());
+			Card card3 = new Card(CardType.CREDIT,CardColor.SILVER,"8042589683216345",LocalDate.now(),LocalDate.now().plusYears(5), "231",client2.getFirstName() + " " + client2.getLastName());
 
 			// Saving accounts
 			accountRepository.save(account1);
@@ -110,6 +114,11 @@ public class HomebankingApplication {
 			client2.addClientLoan(clientLoan3);
 			client2.addClientLoan(clientLoan4);
 
+			//addCard to client
+			client1.addCard(card1);
+			client1.addCard(card2);
+			client2.addCard(card3);
+
 			//other way to use addClientLoan
 			//client1.addClientLoan(new ClientLoan(400000, 60, client1, loan1));
 
@@ -146,6 +155,11 @@ public class HomebankingApplication {
 			loanRepository.save(loan1);
 			loanRepository.save(loan2);
 			loanRepository.save(loan3);
+
+			//saving cards
+			cardRepository.save(card1);
+			cardRepository.save(card2);
+			cardRepository.save(card3);
 
 
 
