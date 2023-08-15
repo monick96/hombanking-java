@@ -102,7 +102,6 @@ public class Card {
     public String getCvv() {
         return cvv;
     }
-
     public Client getClient() {
         return client;
     }

@@ -31,9 +31,6 @@ public class Client {
     //relationship with card
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<Card> cards = new HashSet<>();
-
-
-
     private String firstName;
     private String lastName;
 
@@ -42,9 +39,7 @@ public class Client {
     //class constructors
 
     // Parameterless constructor
-    public Client() {
-
-    }
+    public Client() {}
 
     // Constructor with parameters to initialize all attributes
     public Client( String firstName, String lastName, String email) {
