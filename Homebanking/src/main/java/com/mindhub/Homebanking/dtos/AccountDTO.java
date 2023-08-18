@@ -17,8 +17,9 @@ public class AccountDTO {
     private LocalDate creationDate;
     private double balance;
 
-    //constructor
+    //constructors
     public AccountDTO(){}
+
     public AccountDTO(Account account) {
         this.id = account.getId();
         this.transactions = account.getTransactions()
@@ -34,15 +35,19 @@ public class AccountDTO {
     public Long getId() {
         return id;
     }
+
     public Set<TransactionDTO> getTransactions() {
         return transactions;
     }
+
     public String getNumber() {
         return number;
     }
+
     public LocalDate getCreationDate() {
         return creationDate;
     }
+
     public double getBalance() {
         return balance;
     }

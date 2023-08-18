@@ -14,6 +14,7 @@ public class TransactionDTO {
 
     //class constructors
     public TransactionDTO(){}
+
     public TransactionDTO(Transaction transaction) {
         this.id = transaction.getId();
         this.type = transaction.getType();
@@ -26,15 +27,19 @@ public class TransactionDTO {
     public Long getId() {
         return id;
     }
+
     public TransactionType getType() {
         return type;
     }
+
     public long getAmount() {
         return amount;
     }
+
     public String getDescription() {
         return description;
     }
+
     public LocalDateTime getDate() {
         return date;
     }
