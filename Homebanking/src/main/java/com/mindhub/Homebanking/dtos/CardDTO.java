@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class CardDTO {
     private Long id;
@@ -19,6 +20,8 @@ public class CardDTO {
     private LocalDate fromDate;
     private LocalDate thruDate;
     private String cvv;
+    private String formattedFromDate;
+    private String formattedThruDate;
 
 
     //constructors
@@ -33,6 +36,8 @@ public class CardDTO {
         this.fromDate = card.getFromDate();
         this.thruDate = card.getThruDate();
         this.cvv = card.getCvv();
+        this.formattedFromDate = getFormattedFromDate();
+        this.formattedThruDate = getFormattedThruDate();
     }
     //getters
 
@@ -68,4 +73,10 @@ public class CardDTO {
         return cvv;
     }
 
-}
+    public String getFormattedFromDate() {
+        return fromDate.format(DateTimeFormatter.ofPattern("MM/yyyy"));
+    }
+
+    public String getFormattedThruDate() {return thruDate.format(DateTimeFormatter.ofPattern("MM/yyyy"));}
+
+    }
