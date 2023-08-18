@@ -1,9 +1,6 @@
 package com.mindhub.Homebanking.dtos;
 
-import com.mindhub.Homebanking.models.Account;
-import com.mindhub.Homebanking.models.Client;
-import com.mindhub.Homebanking.models.ClientLoan;
-import com.mindhub.Homebanking.models.Transaction;
+import com.mindhub.Homebanking.models.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +20,8 @@ public class ClientDTO {
     private String lastName;
     private String email;
     private Set<ClientLoanDTO> loans = new HashSet<>();
+    private Set<CardDTO> cards = new HashSet<>();
+
 
     //class constructors
     public ClientDTO() {}
@@ -36,9 +35,13 @@ public class ClientDTO {
         this.firstName = client.getFirstName();
         this.lastName = client.getLastName();
         this.email = client.getEmail();
-        this.loans = (Set<ClientLoanDTO>) client.getClientLoans()
+        this.loans = client.getClientLoans()
                 .stream()
                 .map(clientLoan -> new ClientLoanDTO(clientLoan))
+                .collect(Collectors.toSet());
+        this.cards = client.getCards()
+                .stream()
+                .map(card -> new CardDTO(card))
                 .collect(Collectors.toSet());
     }
 
@@ -61,5 +64,7 @@ public class ClientDTO {
     public String getEmail() {
         return email;
     }
-
+    public Set<CardDTO> getCards() {
+        return cards;
+    }
 }

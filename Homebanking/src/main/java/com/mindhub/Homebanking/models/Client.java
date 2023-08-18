@@ -28,6 +28,9 @@ public class Client {
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<ClientLoan> clientLoans = new HashSet<>();
 
+    //relationship with card
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private Set<Card> cards = new HashSet<>();
     private String firstName;
     private String lastName;
 
@@ -36,9 +39,7 @@ public class Client {
     //class constructors
 
     // Parameterless constructor
-    public Client() {
-
-    }
+    public Client() {}
 
     // Constructor with parameters to initialize all attributes
     public Client( String firstName, String lastName, String email) {
@@ -48,11 +49,13 @@ public class Client {
     }
 
     // Getters and setters for attributes - accessor methods
-
     public Set<ClientLoan> getClientLoans() {
         return clientLoans;
     }
 
+    public Set<Card> getCards() {
+        return cards;
+    }
     public Long getId() {
         return id;
     }
@@ -87,7 +90,6 @@ public class Client {
     public void addAccount(Account account){
         // Establishes the bidirectional relationship between the client and the account.
         // The "account" argument represents the account to be added to the client
-
         account.setClient(this); // Sets the client's customer as the current customer (this).
         accounts.add(account);// Add the account to the set of accounts associated with the client.
     }
@@ -97,5 +99,9 @@ public class Client {
         clientLoans.add(clientLoan);
     }
 
+    public void addCard(Card card){
+        card.setClient(this);
+        cards.add(card);
+    }
 
 }

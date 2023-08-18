@@ -24,11 +24,23 @@ The objectives of this task3 were:
 - A web page that shows the information of the account and the list of transactions of the same.
 
 # Task4
-The objectives of this task3 were:
+The objectives of this task4 were:
 - Create the Loan entity and the repository
 - Create the test data
 - Test automatic REST services
 - Create the ClientLoan entity and the repository
 - Modify the account view to show loans
+
+# Task5
+The objectives of this task5 were:
+- Create the Card entity and the repository
+- Create the test data:
+  - In the CommandLineRunner you must create:
+    - A GOLD debit card for the client Melba, the start date of validity is the current date and the expiration date 5 years from the current date, cardholder will have the name and surname of the concatenated customer, the other fields can be completed at your choice, remember that the cvv has only 3 digits.
+    - A Titanium credit card for the client Melba with the same data except number and cvv.
+    - Create a silver credit card for the second customer.
+- Try the automatic REST services (go to the routes /rest/cards and /rest/clients/1/cards and verify that the cards have been created)
+- Add the information of the cards to the JSON of clients (Modify the ClientDTO to show the information of the client's cards)
+- Verify that the data is displayed correctly on the front
 
 
