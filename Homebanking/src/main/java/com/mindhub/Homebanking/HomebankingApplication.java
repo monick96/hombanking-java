@@ -35,6 +35,8 @@ public class HomebankingApplication {
 
 			Client client2 = new Client("Javier","Miller","miller@mail.com", passwordEncoder.encode("m3g4"));
 
+			Client admin = new Client("admin","admin","admin", passwordEncoder.encode("admin"));
+
 			//accounts
 			//melba's first account
 			Account account1 = new Account("VIN001",LocalDate.now(),5000.0);
