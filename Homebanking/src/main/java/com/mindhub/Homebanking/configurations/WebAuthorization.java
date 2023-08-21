@@ -2,6 +2,7 @@ package com.mindhub.Homebanking.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,27 +21,38 @@ public class WebAuthorization{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-
-                .antMatchers("/web/index.html","/web/js/index.js","/web/js/accounts.js","/web/js/account.js","/api/logout").permitAll()
-                //.antMatchers("/web/**").permitAll();
-
-                .antMatchers("/h2-console").hasAuthority("ADMIN")
+                .antMatchers("/web/index.html", "/web/js/index.js", "/web/css/**", "/web/img/**").permitAll()
 
 
-                .antMatchers("/manager.html").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
 
 
-                .antMatchers("/rest/**").hasAuthority("ADMIN")
+                .antMatchers("/api/clients/{id}","/api/accounts","/api/accounts/{id}").hasAuthority("CLIENT")
 
 
-                .antMatchers("/api/clients/current","/web/accounts.html","/web/cards.html","/web/account.html","/api/login","/api/logout").hasAuthority("CLIENT")
+                .antMatchers(HttpMethod.POST,"/api/clients/current/accounts").hasAuthority("CLIENT")
 
-                //sacar "api/clients/{id}" una vez inplementado "/api/clients/current"
-                .antMatchers("/api/clients/{id}","/api/accounts/{id}").hasAuthority("CLIENT")
 
+                .antMatchers("/api/clients/current").hasAuthority("CLIENT")
+
+
+                .antMatchers( "/api/login", "/api/logout").hasAuthority("CLIENT")
+
+
+                .antMatchers("/manager.html", "/manager.js").hasAuthority("ADMIN")
+
+
+                .antMatchers("/rest/**", "/api/**").hasAuthority("ADMIN")
+
+
+                .antMatchers("/h2-console","/h2-console/**").hasAuthority("ADMIN")
+
+
+                .antMatchers("/web/**").hasAnyAuthority("CLIENT","ADMIN")
 
 
                 .anyRequest().denyAll();
+
 
 
 
