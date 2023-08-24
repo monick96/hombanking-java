@@ -27,6 +27,7 @@ public class CardDTO {
     //constructors
     public CardDTO() {
     }
+
     public CardDTO(Card card) {
         this.id = card.getId();
         this.cardHolder = card.getCardHolder();
@@ -39,8 +40,8 @@ public class CardDTO {
         this.formattedFromDate = getFormattedFromDate();
         this.formattedThruDate = getFormattedThruDate();
     }
-    //getters
 
+    //getters
     public Long getId() {
         return id;
     }
@@ -73,6 +74,7 @@ public class CardDTO {
         return cvv;
     }
 
+    //format the date so that only month/year is visible on the front
     public String getFormattedFromDate() {
         return fromDate.format(DateTimeFormatter.ofPattern("MM/yyyy"));
     }

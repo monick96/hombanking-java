@@ -36,19 +36,30 @@ public class Client {
 
     private String email;
 
+    private String password;
+
     //class constructors
 
     // Parameterless constructor
     public Client() {}
 
     // Constructor with parameters to initialize all attributes
-    public Client( String firstName, String lastName, String email) {
+    public Client( String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.password = password;
     }
 
     // Getters and setters for attributes - accessor methods
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Set<ClientLoan> getClientLoans() {
         return clientLoans;
     }
@@ -56,9 +67,11 @@ public class Client {
     public Set<Card> getCards() {
         return cards;
     }
+
     public Long getId() {
         return id;
     }
+
     public String getFirstName() {
         return firstName;
     }

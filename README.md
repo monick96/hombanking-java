@@ -43,4 +43,15 @@ The objectives of this task5 were:
 - Add the information of the cards to the JSON of clients (Modify the ClientDTO to show the information of the client's cards)
 - Verify that the data is displayed correctly on the front
 
+# Task6
+Implement client registration and login
+The objectives of this task6 were:
+- Modify the customer entity to include a password field
+- Add code on the server to handle login and logout
+- Add a method in the client controller that allows creating new clients if the information sent is correct
+- Create a web page that has a form to register and to log in with the necessary Javascript code to send the information to the server.
+- Add a method in the client controller that allows obtaining the data of an authenticated client.
+- Verify that the data is displayed correctly on the front
+
+
 

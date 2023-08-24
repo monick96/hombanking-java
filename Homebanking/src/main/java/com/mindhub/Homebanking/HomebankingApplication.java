@@ -2,10 +2,13 @@ package com.mindhub.Homebanking;
 
 import com.mindhub.Homebanking.models.*;
 import com.mindhub.Homebanking.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,13 +24,18 @@ public class HomebankingApplication {
 		SpringApplication.run(HomebankingApplication.class, args);
 	}
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	//password encryption
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
 		return (args -> {
 			//creating client instances
-			Client client1 = new Client("Melba","Morel","melba@mindhub.com");
+			Client client1 = new Client("Melba","Morel","melba@mindhub.com", passwordEncoder.encode("4lf4"));
 
-			Client client2 = new Client("Javier","Miller","miller@mail.com");
+			Client client2 = new Client("Javier","Miller","miller@gmail.com", passwordEncoder.encode("m3g4"));
+
+			Client admin = new Client("admin","admin","admin@gmail.com", passwordEncoder.encode("admin"));
 
 			//accounts
 			//melba's first account
@@ -67,6 +75,7 @@ public class HomebankingApplication {
 			//Saving clients
 			clientRepository.save(client1);
 			clientRepository.save(client2);
+			clientRepository.save(admin);
 
 			//card object for Melba
 			Card card1 = new Card(CardType.DEBIT,CardColor.GOLD,"8043275912834567",LocalDate.now(),LocalDate.now().plusYears(5), "123",client1.getFirstName() + " " + client1.getLastName());
