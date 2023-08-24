@@ -33,7 +33,7 @@ The objectives of this task4 were:
 
 # Task5
 The objectives of this task5 were:
-- Create the Card entity and the repository
+  ## Create the Card entity and the repository
 - Create the test data:
   - In the CommandLineRunner you must create:
     - A GOLD debit card for the client Melba, the start date of validity is the current date and the expiration date 5 years from the current date, cardholder will have the name and surname of the concatenated customer, the other fields can be completed at your choice, remember that the cvv has only 3 digits.
@@ -44,7 +44,7 @@ The objectives of this task5 were:
 - Verify that the data is displayed correctly on the front
 
 # Task6
-Implement client registration and login
+  ## Implement client registration and login
 The objectives of this task6 were:
 - Modify the customer entity to include a password field
 - Add code on the server to handle login and logout
@@ -52,6 +52,13 @@ The objectives of this task6 were:
 - Create a web page that has a form to register and to log in with the necessary Javascript code to send the information to the server.
 - Add a method in the client controller that allows obtaining the data of an authenticated client.
 - Verify that the data is displayed correctly on the front
+
+# Task7 
+ ## Add creating accounts and cards
+- Create a new resource to create accounts
+- Implement the create accounts button
+- Create account when registering a client
+- Create card controller
 
 
 
