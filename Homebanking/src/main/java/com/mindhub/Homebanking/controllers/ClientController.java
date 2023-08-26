@@ -1,7 +1,9 @@
 package com.mindhub.Homebanking.controllers;
 
 import com.mindhub.Homebanking.dtos.ClientDTO;
+import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
+import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -11,8 +13,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static java.util.stream.Collectors.toList;
 
@@ -24,6 +28,9 @@ public class ClientController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    AccountRepository accountRepository;
 
     @RequestMapping("/clients")
     public List<ClientDTO> getClients() {
@@ -43,41 +50,77 @@ public class ClientController {
             @RequestParam String email, @RequestParam String password) {
 
 
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+        if (firstName.isBlank() || lastName.isBlank() || email.isBlank() || password.isBlank()) {
 
             String missingField = "";
 
-            if (firstName.isEmpty()) {
+            if (firstName.isBlank()) {
 
                 missingField = "First Name";
 
-            } else if (lastName.isEmpty()) {
+            } else if (lastName.isBlank()) {
 
                 missingField = "Last Name";
 
-            } else if (email.isEmpty()) {
+            } else if (email.isBlank()) {
 
                 missingField = "Email";
 
-            } else if (password.isEmpty()) {
+            } else if (password.isBlank()) {
 
                 missingField = "Password";
 
             }
 
-            return new ResponseEntity<>(missingField + " is missing", HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(missingField + " is missing");
+
         }
 
 
         if (clientRepository.findByEmail(email) !=  null) {
 
-            return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
+            //return new ResponseEntity<>("mail already in use", HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("mail already in use");
 
         }
 
-        clientRepository.save(new Client(firstName, lastName, email, passwordEncoder.encode(password)));
+        Client newClient = new Client(firstName, lastName, email, passwordEncoder.encode(password));
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        clientRepository.save(newClient);
+
+        //create aleatory account number
+        // Generate the random account number
+        Random random = new Random();
+        boolean accountNumberExists;
+        String number;
+
+        do{
+            // Generate a random number between 100000 and 999999
+            int numRandom = random.nextInt(900000) + 100000;
+            number = "VIN-" + numRandom;
+
+            // Check if the number is already in use on clients
+            String finalNumber = number;
+            accountNumberExists = clientRepository.findAll().stream()
+                    .anyMatch(client -> client.getAccounts().stream()
+                    .anyMatch(account -> account.getNumber().equals(finalNumber)));
+
+            if (!accountNumberExists){
+                //create new client account
+                Account newAccount = new Account(finalNumber,LocalDate.now(),0.0);
+
+                // Associate the account with the client
+                newClient.addAccount(newAccount);
+
+                //save account
+                accountRepository.save(newAccount);
+            }
+
+
+        }while(accountNumberExists);
+
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Successful registration");
     }
 
 

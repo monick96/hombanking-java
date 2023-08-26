@@ -39,13 +39,13 @@ public class HomebankingApplication {
 
 			//accounts
 			//melba's first account
-			Account account1 = new Account("VIN001",LocalDate.now(),5000.0);
+			Account account1 = new Account("VIN-001",LocalDate.now(),5000.0);
 
 			//melba's second account
-			Account account2 = new Account("VIN002",LocalDate.now().plusDays(1),7500.0);
+			Account account2 = new Account("VIN-002",LocalDate.now().plusDays(1),7500.0);
 
 			//javier's account
-			Account account3 = new Account("VIN003",LocalDate.now().plusDays(5),75000.0);
+			Account account3 = new Account("VIN-003",LocalDate.now().plusDays(5),75000.0);
 
 			//Transactions
 			Transaction transaction1 = new Transaction(TransactionType.CREDIT,60000,"Fees", LocalDateTime.now());

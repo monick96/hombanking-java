@@ -56,6 +56,7 @@ public class WebAuthorization{
 
 
 
+
         http.formLogin()
 
                 .usernameParameter("email")
@@ -66,7 +67,7 @@ public class WebAuthorization{
 
 
 
-        http.logout().logoutUrl("/api/logout");
+        http.logout().logoutUrl("/api/logout").deleteCookies("JSESSIONID");
 
 
         // turn off checking for CSRF tokens
