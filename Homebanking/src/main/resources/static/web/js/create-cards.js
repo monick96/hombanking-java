@@ -31,6 +31,7 @@ Vue.createApp({
                         'content-type': 'application/x-www-form-urlencoded'
                     }
                 }
+                //cambiee nombre variables
                 axios.post(`/api/clients/current/cards?cardType=${this.cardType}&cardColor=${this.cardColor}`, config)
                     .then(response => window.location.href = "/web/cards.html")
                     .catch((error) => {

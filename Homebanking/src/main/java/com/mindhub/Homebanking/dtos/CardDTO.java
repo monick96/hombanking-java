@@ -19,7 +19,7 @@ public class CardDTO {
     private String number;
     private LocalDate fromDate;
     private LocalDate thruDate;
-    private String cvv;
+    private int cvv;
     private String formattedFromDate;
     private String formattedThruDate;
 
@@ -70,7 +70,7 @@ public class CardDTO {
         return thruDate;
     }
 
-    public String getCvv() {
+    public int getCvv() {
         return cvv;
     }
 

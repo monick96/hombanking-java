@@ -78,10 +78,10 @@ public class HomebankingApplication {
 			clientRepository.save(admin);
 
 			//card object for Melba
-			Card card1 = new Card(CardType.DEBIT,CardColor.GOLD,"8043275912834567",LocalDate.now(),LocalDate.now().plusYears(5), "123",client1.getFirstName() + " " + client1.getLastName());
-			Card card2 = new Card(CardType.CREDIT,CardColor.TITANIUM,"8042275912834563",LocalDate.now(),LocalDate.now().plusYears(5), "321",client1.getFirstName() + " " + client1.getLastName());
+			Card card1 = new Card(CardType.DEBIT,CardColor.GOLD,"8043-2759-1283-4567",LocalDate.now(),LocalDate.now().plusYears(5), 123,client1.getFirstName() + " " + client1.getLastName());
+			Card card2 = new Card(CardType.CREDIT,CardColor.TITANIUM,"8042-2759-1283-4563",LocalDate.now(),LocalDate.now().plusYears(5), 321,client1.getFirstName() + " " + client1.getLastName());
 			//card object for Javier
-			Card card3 = new Card(CardType.CREDIT,CardColor.SILVER,"8042589683216345",LocalDate.now(),LocalDate.now().plusYears(5), "231",client2.getFirstName() + " " + client2.getLastName());
+			Card card3 = new Card(CardType.CREDIT,CardColor.SILVER,"8042-5896-8321-6345",LocalDate.now(),LocalDate.now().plusYears(5), 231,client2.getFirstName() + " " + client2.getLastName());
 
 			// Saving accounts
 			accountRepository.save(account1);
