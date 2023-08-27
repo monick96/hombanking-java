@@ -34,6 +34,7 @@ public class ClientController {
 
     @RequestMapping("/clients")
     public List<ClientDTO> getClients() {
+
         return clientRepository
                 .findAll()
                 .stream()
@@ -125,10 +126,42 @@ public class ClientController {
 
 
     @RequestMapping("/clients/{id}")
-    public ClientDTO getClient(@PathVariable Long id) {
-        return clientRepository.findById(id)
-                .map(client -> new ClientDTO(client))
-                .orElse(null);
+    public ResponseEntity<Object> getClient(@PathVariable Long id, Authentication authentication) {
+
+        Client authenticadedClient = clientRepository.findByEmail(authentication.getName());
+
+        //Optional: class in Java to deal with values that may be absent or null.
+        Optional<Client> optionalClient = clientRepository.findById(id);
+
+        if (authenticadedClient != null && optionalClient.isPresent()){
+           Client clientById = optionalClient.get();
+
+            // Check if the authenticated client is the same client as the received id
+            if(authenticadedClient.getId().equals(clientById.getId())){
+
+                ClientDTO clientDTO = new ClientDTO(clientById);
+
+                return ResponseEntity.ok( clientDTO);
+
+            }else {
+
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to access this information.");
+
+            }
+        }
+
+        // Authenticated client or client with ID not found
+
+        if (authenticadedClient == null){
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Authenticated client not found");
+
+        }else{
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("client with this ID not found");
+
+        }
+
     }
 
     @RequestMapping("/clients/current")

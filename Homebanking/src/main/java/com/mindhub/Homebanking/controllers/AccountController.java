@@ -51,11 +51,6 @@ public class AccountController {
     @RequestMapping(path = "/clients/current/accounts", method = RequestMethod.POST)
     public ResponseEntity<Object> createAccount(Authentication authentication) {
 
-        //authentication object verification
-        if (authentication == null || authentication.getName() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication required.");
-        }
-
         // Look up the client by the authenticated username (I get email as username)
         Client authenticatedClient = clientRepository.findByEmail(authentication.getName());
 
