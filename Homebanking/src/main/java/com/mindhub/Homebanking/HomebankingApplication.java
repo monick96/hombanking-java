@@ -39,13 +39,13 @@ public class HomebankingApplication {
 
 			//accounts
 			//melba's first account
-			Account account1 = new Account("VIN001",LocalDate.now(),5000.0);
+			Account account1 = new Account("VIN-001",LocalDate.now(),5000.0);
 
 			//melba's second account
-			Account account2 = new Account("VIN002",LocalDate.now().plusDays(1),7500.0);
+			Account account2 = new Account("VIN-002",LocalDate.now().plusDays(1),7500.0);
 
 			//javier's account
-			Account account3 = new Account("VIN003",LocalDate.now().plusDays(5),75000.0);
+			Account account3 = new Account("VIN-003",LocalDate.now().plusDays(5),75000.0);
 
 			//Transactions
 			Transaction transaction1 = new Transaction(TransactionType.CREDIT,60000,"Fees", LocalDateTime.now());
@@ -78,10 +78,10 @@ public class HomebankingApplication {
 			clientRepository.save(admin);
 
 			//card object for Melba
-			Card card1 = new Card(CardType.DEBIT,CardColor.GOLD,"8043275912834567",LocalDate.now(),LocalDate.now().plusYears(5), "123",client1.getFirstName() + " " + client1.getLastName());
-			Card card2 = new Card(CardType.CREDIT,CardColor.TITANIUM,"8042275912834563",LocalDate.now(),LocalDate.now().plusYears(5), "321",client1.getFirstName() + " " + client1.getLastName());
+			Card card1 = new Card(CardType.DEBIT,CardColor.GOLD,"8043-2759-1283-4567",LocalDate.now(),LocalDate.now().plusYears(5), 123,client1.getFirstName() + " " + client1.getLastName());
+			Card card2 = new Card(CardType.CREDIT,CardColor.TITANIUM,"8042-2759-1283-4563",LocalDate.now(),LocalDate.now().plusYears(5), 321,client1.getFirstName() + " " + client1.getLastName());
 			//card object for Javier
-			Card card3 = new Card(CardType.CREDIT,CardColor.SILVER,"8042589683216345",LocalDate.now(),LocalDate.now().plusYears(5), "231",client2.getFirstName() + " " + client2.getLastName());
+			Card card3 = new Card(CardType.CREDIT,CardColor.SILVER,"8042-5896-8321-6345",LocalDate.now(),LocalDate.now().plusYears(5), 231,client2.getFirstName() + " " + client2.getLastName());
 
 			// Saving accounts
 			accountRepository.save(account1);
