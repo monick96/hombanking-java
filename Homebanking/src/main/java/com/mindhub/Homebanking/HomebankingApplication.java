@@ -35,7 +35,7 @@ public class HomebankingApplication {
 
 			Client client2 = new Client("Javier","Miller","miller@gmail.com", passwordEncoder.encode("m3g4"));
 
-			Client admin = new Client("admin","admin","admin@gmail.com", passwordEncoder.encode("admin"));
+			Client admin = new Client("Roberto","Flores","admin@mindhubbank.com", passwordEncoder.encode("admin"));
 
 			//accounts
 			//melba's first account

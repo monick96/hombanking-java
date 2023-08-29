@@ -134,6 +134,8 @@ public class ClientController {
         Optional<Client> optionalClient = clientRepository.findById(id);
 
         if (authenticadedClient != null && optionalClient.isPresent()){
+
+            //get client
            Client clientById = optionalClient.get();
 
             // Check if the authenticated client is the same client as the received id

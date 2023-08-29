@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -40,17 +41,57 @@ public class AccountController {
                 .collect(toList());
     }
 
+    //@RequestMapping("/accounts/{id}") only the authenticated client owning the account with that id can access the data
+    //this route is no longer available to the admin, he can only see the "/accounts" route
     @RequestMapping("/accounts/{id}")
-    //agregar condicinal y usar autentication
-    public AccountDTO getAccount(@PathVariable Long id) {
-        return accountRepository.findById(id)
-                .map(account -> new AccountDTO(account))
-                .orElse(null);
+    public ResponseEntity <Object>getAccount(@PathVariable Long id, Authentication authentication) {
+
+        //checks if the user is authenticated
+        //(authentication == null) checks if a user has not tried to authenticate at all
+        //(authentication.isAuthenticated()) checks if a user tried to authenticate but failed,
+        // authentication could be an unauthenticated object.
+        if (authentication == null || !authentication.isAuthenticated()) {
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized, login required");
+
+        }
+
+        //get the optional account by ID
+        Optional<Account> accountOptional = accountRepository.findById(id);
+
+        //accountOptional.isPresent() checks if values are absent or null.
+        if (!accountOptional.isPresent()) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account with this ID not found");
+
+        }
+
+        //get account
+        Account account = accountOptional.get();
+
+        //get authenticated client
+        Client authenticadedClient = clientRepository.findByEmail(authentication.getName());
+
+        //checks if the authenticated client has associated the account that consults
+        if (account.getClient().equals(authenticadedClient)){
+
+            AccountDTO accountDTO = new AccountDTO(account);
+
+            return ResponseEntity.ok(accountDTO);
+
+        }else {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to access this information.");
+
+        }
+
     }
 
     //create get request to "/clients/current/accounts"
     @RequestMapping(path = "/clients/current/accounts")
     public ResponseEntity<Object> getAccounts(Authentication authentication){
+
+        //get authenticated client
         Client authenticatedClient = clientRepository.findByEmail(authentication.getName());
 
         if (authenticatedClient == null ) {
