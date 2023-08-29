@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -45,6 +46,34 @@ public class AccountController {
         return accountRepository.findById(id)
                 .map(account -> new AccountDTO(account))
                 .orElse(null);
+    }
+
+    //create get request to "/clients/current/accounts"
+    @RequestMapping(path = "/clients/current/accounts")
+    public ResponseEntity<Object> getAccounts(Authentication authentication){
+        Client authenticatedClient = clientRepository.findByEmail(authentication.getName());
+
+        if (authenticatedClient == null ) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized, login required");
+        }
+
+        // If the client is authenticated, get their accounts
+        List<Account> clientAccounts = accountRepository.findByClient(authenticatedClient);
+
+        if (clientAccounts == null) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No accounts found");
+
+        }
+
+        // Convert Account objects to AccountDTO
+        List<AccountDTO> accountDTOs = clientAccounts.stream()
+                .map(account -> new AccountDTO(account))
+                .collect(Collectors.toList());
+
+
+        return ResponseEntity.ok(accountDTOs);
+
     }
 
     //create account
