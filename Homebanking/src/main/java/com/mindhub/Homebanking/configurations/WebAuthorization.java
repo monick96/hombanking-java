@@ -27,13 +27,13 @@ public class WebAuthorization{
                 .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
 
 
-                .antMatchers("/api/clients/{id}","/api/accounts","/api/accounts/{id}").hasAuthority("CLIENT")
+                .antMatchers("/api/clients/{id}","/api/accounts/{id}").hasAuthority("CLIENT")
 
 
-                .antMatchers(HttpMethod.POST,"/api/clients/current/accounts", "/api/clients/current/cards").hasAuthority("CLIENT")
+                .antMatchers(HttpMethod.POST,"/api/clients/current/accounts", "/api/clients/current/cards", "/api/transactions").hasAuthority("CLIENT")
 
 
-                .antMatchers("/api/clients/current", "/api/clients/current/cards").hasAuthority("CLIENT")
+                .antMatchers("/api/clients/current", "/api/clients/current/cards","/api/clients/current/accounts").hasAuthority("CLIENT")
 
 
                 .antMatchers( "/api/login", "/api/logout").hasAuthority("CLIENT")

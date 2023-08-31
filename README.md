@@ -60,5 +60,19 @@ The objectives of this task6 were:
 - Create account when registering a client
 - Create card controller
 
+# Task8
+##  Add making transactions
+- Understand the concept of transaction and comply with the ACID model (Atomicity, Consistency, Isolation and Durability)
+- Create a resource(controller) to perform transactions, keep in mind:
+  - You must receive the amount, description, origin account number and destination account number as request parameters
+  - Check that the parameters are not empty
+  - Verify that the account numbers are not the same
+  - Verify that the source account exists
+  - Verify that the source account belongs to the authenticated client
+  - Verify that the destination account exists
+  - Verify that the source account has the amount available.
+  - Two transactions must be created, one with the transaction type "DEBIT" associated with the source account and the other with the transaction type "CREDIT" associated with the destination account.
+  - The amount indicated in the request will be subtracted from the origin account and the same amount will be added to the destination account.
+
 
 
