@@ -74,5 +74,18 @@ The objectives of this task6 were:
   - Two transactions must be created, one with the transaction type "DEBIT" associated with the source account and the other with the transaction type "CREDIT" associated with the destination account.
   - The amount indicated in the request will be subtracted from the origin account and the same amount will be added to the destination account.
 
+# Task9
+## Add applying for loans
+- Create a resource to apply for loans
+  - You must receive a credit application object with the loan data
+  - Verify that the data is correct, that is, they are not empty, that the amount is not 0 or that the fees are not 0.
+  - Verify that the loan exists
+  - Verify that the amount requested does not exceed the maximum amount of the loan
+  - Verify that the number of installments is among those available for the loan
+  - Verify that the target account exists
+  - Verify that the destination account belongs to the authenticated client
+  - A loan application must be created with the requested amount adding 20% of it
+  - A "CREDIT" transaction must be created associated with the destination account (the amount must be positive) with the description concatenating the name of the loan and the phrase "loan approved"
+  - The destination account must be updated adding the requested amount.
 
 
