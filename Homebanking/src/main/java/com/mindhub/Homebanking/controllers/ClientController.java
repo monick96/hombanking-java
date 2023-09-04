@@ -5,6 +5,7 @@ import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
+import com.mindhub.Homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/api")
 public class ClientController {
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -35,13 +36,10 @@ public class ClientController {
     @RequestMapping("/clients")
     public List<ClientDTO> getClients() {
 
-        return clientRepository
-                .findAll()
-                .stream()
-                .map(client -> new ClientDTO(client))//o -> map(ClientDTO::new)
-                .collect(toList());
+        return clientService.getClientsDTO();
 
     }
+
 
     @RequestMapping(path = "/clients", method = RequestMethod.POST)
     public ResponseEntity<Object> register(
@@ -78,7 +76,7 @@ public class ClientController {
         }
 
 
-        if (clientRepository.findByEmail(email) !=  null) {
+        if (clientService.getClientFindByEmail(email) !=  null) {
 
             //return new ResponseEntity<>("mail already in use", HttpStatus.FORBIDDEN);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("mail already in use");
@@ -87,7 +85,7 @@ public class ClientController {
 
         Client newClient = new Client(firstName, lastName, email, passwordEncoder.encode(password));
 
-        clientRepository.save(newClient);
+        clientService.saveClient(newClient);
 
         //create aleatory account number
         // Generate the random account number
@@ -102,7 +100,7 @@ public class ClientController {
 
             // Check if the number is already in use on clients
             String finalNumber = number;
-            accountNumberExists = clientRepository.findAll().stream()
+            accountNumberExists = clientService.getClientsList().stream()
                     .anyMatch(client -> client.getAccounts().stream()
                     .anyMatch(account -> account.getNumber().equals(finalNumber)));
 
@@ -128,10 +126,10 @@ public class ClientController {
     @RequestMapping("/clients/{id}")
     public ResponseEntity<Object> getClient(@PathVariable Long id, Authentication authentication) {
 
-        Client authenticadedClient = clientRepository.findByEmail(authentication.getName());
+        Client authenticadedClient = clientService.getClientFindByEmail(authentication.getName());
 
         //Optional: class in Java to deal with values that may be absent or null.
-        Optional<Client> optionalClient = clientRepository.findById(id);
+        Optional<Client> optionalClient = clientService.getClientFindById(id);
 
         if (authenticadedClient != null && optionalClient.isPresent()){
 
@@ -141,7 +139,7 @@ public class ClientController {
             // Check if the authenticated client is the same client as the received id
             if(authenticadedClient.getId().equals(clientById.getId())){
 
-                ClientDTO clientDTO = new ClientDTO(clientById);
+                ClientDTO clientDTO = clientService.getClientDTO(clientById);
 
                 return ResponseEntity.ok( clientDTO);
 
@@ -169,7 +167,7 @@ public class ClientController {
     @RequestMapping("/clients/current")
     public ClientDTO getCurrentClient(Authentication authentication) {
 
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = clientService.getClientFindByEmail(authentication.getName());
 
         if (client == null) {
             throw new ResourceNotFoundException("Client not found");

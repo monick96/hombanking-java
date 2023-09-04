@@ -4,14 +4,20 @@ import com.mindhub.Homebanking.dtos.ClientDTO;
 import com.mindhub.Homebanking.models.Client;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ClientService {
+    //abstract methods
+    void saveClient(Client client);//91
 
-    void saveClient(Client client);
+    List<ClientDTO> getClientsDTO();//38
 
-    List<ClientDTO> getClientsDTO();
+    ClientDTO getClientDTO(Client client);
 
+    Client getClientFindByEmail(String email);//linea 82/132/173
 
+    Optional<Client> getClientFindById(Long id);//135
 
+    List<Client> getClientsList();//linea 106
 
 }

@@ -65,12 +65,12 @@ public class HomebankingApplication {
 			Loan loan3 = new Loan("Automotive",300000,payments3);
 
 			// Create ClientLoan for client Melba
-			ClientLoan clientLoan1 = new ClientLoan(client1,loan1,400000,60);
-			ClientLoan clientLoan2 = new ClientLoan(client1,loan2,500000,12);
+			ClientLoan clientLoan1 = new ClientLoan(client1,loan1,60,400000);
+			ClientLoan clientLoan2 = new ClientLoan(client1,loan2,12,500000);
 
 			// Create ClientLoan for client Javier
-			ClientLoan clientLoan3= new ClientLoan(client2,loan2,100000,24);
-			ClientLoan clientLoan4 = new ClientLoan(client2,loan3,200000,36);
+			ClientLoan clientLoan3= new ClientLoan(client2,loan2,24,100000);
+			ClientLoan clientLoan4 = new ClientLoan(client2,loan3,36,200000);
 
 			//Saving clients
 			clientRepository.save(client1);
