@@ -38,17 +38,22 @@ public class ClientServiceImplement implements ClientService {
     }
 
     @Override
-    public Client getClientFindByEmail(String email) {
+    public Client getClientByEmail(String email) {
         return clientRepository.findByEmail(email);
     }
 
     @Override
-    public Optional<Client> getClientFindById(Long id) {
-        return clientRepository.findById(id);
+    public Client getClientById(Long id) {
+        return clientRepository.findClientById(id);
     }
 
     @Override
     public List<Client> getClientsList() {
         return clientRepository.findAll();
+    }
+
+    @Override
+    public Client createClient(String firstName, String lastName, String email, String password) {
+        return new Client(firstName,lastName,email,password);
     }
 }

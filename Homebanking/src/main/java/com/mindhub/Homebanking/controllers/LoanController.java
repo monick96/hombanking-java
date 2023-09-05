@@ -4,6 +4,7 @@ import com.mindhub.Homebanking.dtos.LoanApplicationDTO;
 import com.mindhub.Homebanking.dtos.LoanDTO;
 import com.mindhub.Homebanking.models.*;
 import com.mindhub.Homebanking.repositories.*;
+import com.mindhub.Homebanking.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,19 +25,19 @@ import java.util.stream.Collectors;
 public class LoanController {
 
     @Autowired
-    LoanRepository loanRepository;
+    LoanService loanService;
 
     @Autowired
-    AccountRepository accountRepository;
+    AccountService accountService;
 
     @Autowired
-    ClientRepository clientRepository;
+    ClientService clientService;
 
     @Autowired
-    ClientLoanRepository clientLoanRepository;
+    ClientLoanService clientLoanService;
 
     @Autowired
-    TransactionRepository transactionRepository;
+    TransactionService transactionService;
 
 
     @RequestMapping(path="/loans")
@@ -49,12 +50,10 @@ public class LoanController {
 
         }
 
-        List<Loan> loans = loanRepository.findAll();
+        List<Loan> loans = loanService.getListLoans();
 
         // Map the loans to LoanDTO
-        List<LoanDTO> loanDTOs = loans.stream()
-                .map(loan -> new LoanDTO(loan))
-                .collect(Collectors.toList());
+        List<LoanDTO> loanDTOs = loanService.mapToListLoansDTO(loans);
 
         return ResponseEntity.ok(loanDTOs);
 
@@ -83,7 +82,7 @@ public class LoanController {
         }
 
         // Check that the loan exists
-        Optional<Loan> optionalLoan = loanRepository.findById(loanApplicationDTO.getLoanId());
+        Optional<Loan> optionalLoan = loanService.getOptionalLoanById(loanApplicationDTO.getLoanId());
 
         if (optionalLoan.isEmpty()) {
 
@@ -108,7 +107,7 @@ public class LoanController {
 
         }
 
-        Optional<Account> optionalAccount = accountRepository.findByNumber(loanApplicationDTO.getToAccountNumber());
+        Optional<Account> optionalAccount = accountService.getOptionalAccountByNumber(loanApplicationDTO.getToAccountNumber());
 
         if (optionalAccount.isEmpty()) {
 
@@ -120,7 +119,7 @@ public class LoanController {
         //findByClientEmailAndLoanName(): custom query that finds loans by customer email and loan name.
         //existingLoans: Contains the list of existing loans with the same name. If this list is not empty,
         // it means that the client already has a loan with the same name
-        List <ClientLoan> existingLoans = clientLoanRepository.findByClientEmailAndLoanName(authentication.getName(), loan.getName());
+        List <ClientLoan> existingLoans = clientLoanService.getClientLoanByEmailAndLoanName(authentication.getName(), loan.getName());
 
         if (!existingLoans.isEmpty()) {
             // The client already has a loan with this name, we return an error response
@@ -132,10 +131,10 @@ public class LoanController {
 
         //Verify that the destination account belongs to the authenticated client
         //get authenticated client
-        Client authenticadedClient = clientRepository.findByEmail(authentication.getName());
+        Client authenticadedClient = clientService.getClientByEmail(authentication.getName());
 
         //get authenticated client accounts
-        List<Account> authenticatedClientAccounts = accountRepository.findByClient(authenticadedClient);
+        List<Account> authenticatedClientAccounts = accountService.getAccountsByClient(authenticadedClient);
 
         if (!authenticatedClientAccounts.contains(destinationAccount)) {
 
@@ -147,22 +146,22 @@ public class LoanController {
         long totalAmount = (long) (loanApplicationDTO.getAmount() * 1.20);
 
         // Create the loan request
-        ClientLoan loanRequest = new ClientLoan(authenticadedClient,loan,loanApplicationDTO.getPayments(),totalAmount);
+        ClientLoan loanRequest = clientLoanService.createClientLoan(authenticadedClient,loan,loanApplicationDTO.getPayments(),totalAmount);
 
         //add loan request to client
         authenticadedClient.addClientLoan(loanRequest);
 
         //create a “CREDIT” transaction
-        Transaction creditTransaction = new Transaction(TransactionType.CREDIT,totalAmount,loan.getName() + "Loan approved", LocalDateTime.now());
+        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,totalAmount,loan.getName() + "Loan approved", LocalDateTime.now());
 
         //Update the destination account by adding the requested amount.
         destinationAccount.setBalance(destinationAccount.getBalance() + loanRequest.getAmount());
 
         //save in repositories
-        clientLoanRepository.save(loanRequest);
-        transactionRepository.save(creditTransaction);
-        accountRepository.save(destinationAccount);
-        clientRepository.save(authenticadedClient);
+        clientLoanService.saveClientLoan(loanRequest);
+        transactionService.saveTransaction(creditTransaction);
+        accountService.saveAccount(destinationAccount);
+        clientService.saveClient(authenticadedClient);
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Successfully requested loan");

@@ -7,6 +7,10 @@ import com.mindhub.Homebanking.models.TransactionType;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.repositories.TransactionRepository;
+import com.mindhub.Homebanking.services.AccountService;
+import com.mindhub.Homebanking.services.CardService;
+import com.mindhub.Homebanking.services.ClientService;
+import com.mindhub.Homebanking.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +29,13 @@ import java.util.Optional;
 public class TransactionController {
 
     @Autowired
-    AccountRepository accountRepository;
+    AccountService accountService;
 
     @Autowired
-    ClientRepository clientRepository;
+    ClientService clientService;
 
     @Autowired
-    TransactionRepository transactionRepository;
+    TransactionService transactionService;
 
     @Transactional
     @RequestMapping(path = "/transactions", method = RequestMethod.POST)
@@ -71,10 +75,10 @@ public class TransactionController {
         }
 
         // Get the authenticated client
-        Client authenticatedClient = clientRepository.findByEmail(authentication.getName());
+        Client authenticatedClient = clientService.getClientByEmail(authentication.getName());
 
         //Find the source account using the account number
-        Optional<Account> optionalOriginAccount = accountRepository.findByNumber(fromAccountNumber);
+        Optional<Account> optionalOriginAccount = accountService.getOptionalAccountByNumber(fromAccountNumber);
 
         //Check if the optionalOriginAccount is not present (!optionalSourceAccount.isPresent())
         // or if the present account does not belong
@@ -97,9 +101,9 @@ public class TransactionController {
         Account originAccount = optionalOriginAccount.get();
 
         //// Verify that the destination account exists
-        Optional<Account> optionalDestinationAccount = accountRepository.findByNumber(toAccountNumber);
+        Optional<Account> optionalDestinationAccount = accountService.getOptionalAccountByNumber(toAccountNumber);
 
-        if (!optionalDestinationAccount.isPresent() ){
+        if (optionalDestinationAccount.isEmpty()){
 
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Destination account does not exist");
 
@@ -116,8 +120,8 @@ public class TransactionController {
         }
 
         //create transactions
-        Transaction debitTransaction = new Transaction(TransactionType.DEBIT,amount,description + " (DEBIT " + fromAccountNumber + ")", LocalDateTime.now());
-        Transaction creditTransaction = new Transaction(TransactionType.CREDIT,amount,description + " (CREDIT " + toAccountNumber + ")", LocalDateTime.now());
+        Transaction debitTransaction = transactionService.createTransaction(TransactionType.DEBIT,amount,description + " (DEBIT " + fromAccountNumber + ")", LocalDateTime.now());
+        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,amount,description + " (CREDIT " + toAccountNumber + ")", LocalDateTime.now());
 
         //link transaction with account
         originAccount.addTransaction(debitTransaction);
@@ -130,10 +134,10 @@ public class TransactionController {
         //add to the destination account
         destinationAccount.setBalance(destinationAccount.getBalance() + amount);
 
-        transactionRepository.save(debitTransaction);
-        transactionRepository.save(creditTransaction);
-        accountRepository.save(originAccount);
-        accountRepository.save(destinationAccount);
+        transactionService.saveTransaction(debitTransaction);
+        transactionService.saveTransaction(creditTransaction);
+        accountService.saveAccount(originAccount);
+        accountService.saveAccount(destinationAccount);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Transaction created successfully.");
 

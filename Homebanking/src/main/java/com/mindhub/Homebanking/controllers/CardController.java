@@ -6,6 +6,8 @@ import com.mindhub.Homebanking.models.CardType;
 import com.mindhub.Homebanking.models.Client;
 import com.mindhub.Homebanking.repositories.CardRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
+import com.mindhub.Homebanking.services.CardService;
+import com.mindhub.Homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +24,10 @@ import java.util.Set;
 public class CardController {
 
     @Autowired
-    CardRepository cardRepository;
+    CardService cardService;
 
     @Autowired
-    ClientRepository clientRepository;
+    ClientService clientService;
 
     @RequestMapping(path = "/clients/current/cards", method = RequestMethod.POST)
     public ResponseEntity <Object> createCard (
@@ -43,7 +45,7 @@ public class CardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Card color and type are required.");
         }
 
-        Client authenticatedClient = clientRepository.findByEmail(authentication.getName());
+        Client authenticatedClient = clientService.getClientByEmail(authentication.getName());
 
         if (authenticatedClient != null) {
             Set<Card> clientCards= authenticatedClient.getCards();
@@ -65,15 +67,15 @@ public class CardController {
                 cardNumber = generateRandomCardNumber();
 
                 // Check if the generated card number or CVV already exist in the card repository
-            } while (cardRepository.existsByNumber(cardNumber) || cardRepository.existsByCvv(cvv));
+            } while (cardService.cardExistsByNumber(cardNumber) || cardService.cardExistsByCvv(cvv));
 
             // Create and persist new card
-            Card newCard = new Card(cardType,cardColor,cardNumber, LocalDate.now(),LocalDate.now().plusYears(5),cvv,authenticatedClient.getFirstName() + " " + authenticatedClient.getLastName());
-            cardRepository.save(newCard);
+            Card newCard = cardService.createCard(cardType,cardColor,cardNumber, LocalDate.now(),LocalDate.now().plusYears(5),cvv,authenticatedClient.getFirstName() + " " + authenticatedClient.getLastName());
+            cardService.saveCard(newCard);
 
             //associate client with card and save in ClientRepository
             authenticatedClient.addCard(newCard);
-            clientRepository.save(authenticatedClient);
+            clientService.saveClient(authenticatedClient);
 
             return ResponseEntity.status(HttpStatus.CREATED).body("The card was created successfully");
 
