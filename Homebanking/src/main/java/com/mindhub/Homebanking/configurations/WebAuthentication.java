@@ -33,7 +33,6 @@ public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
 
             if (client != null) {
 
-
                 //.endsWith()
                 //ensures that you are specifically checking if the desired domain
                 // is present at the end of the email address and not in other parts of the chain.
