@@ -144,7 +144,7 @@ public class AccountController {
                 accountNumberExists = clientService.getClientsList().stream()
                                 .anyMatch(client -> client.getAccounts().stream()
                                 .anyMatch(account -> account.getNumber().equals(finalNumber)));
-
+                //sacar fuera del while
                 if (!accountNumberExists) {
                     //create new client account
                     Account newAccount = accountService.createAccount(finalNumber, LocalDate.now(), 0.0);
@@ -156,8 +156,9 @@ public class AccountController {
                     accountService.saveAccount(newAccount);
                 }
 
-
             } while (accountNumberExists);
+
+
 
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Account created");
