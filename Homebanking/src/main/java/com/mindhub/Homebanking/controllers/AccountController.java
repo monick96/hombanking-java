@@ -1,11 +1,11 @@
 package com.mindhub.Homebanking.controllers;
 
 import com.mindhub.Homebanking.dtos.AccountDTO;
-import com.mindhub.Homebanking.dtos.ClientDTO;
 import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
-import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
+import com.mindhub.Homebanking.services.AccountService;
+import com.mindhub.Homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,24 +21,20 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-
 @RestController
 @RequestMapping("/api")
 public class AccountController {
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @RequestMapping("/accounts")
     public List<AccountDTO> getAccounts() {
-        return accountRepository
-                .findAll()
-                .stream()
-                .map(account -> new AccountDTO(account))//o -> map(ClientDTO::new)
-                .collect(toList());
+
+        return accountService.getListAccountDTO();
+
     }
 
     //@RequestMapping("/accounts/{id}") only the authenticated client owning the account with that id can access the data
@@ -57,10 +53,10 @@ public class AccountController {
         }
 
         //get the optional account by ID
-        Optional<Account> accountOptional = accountRepository.findById(id);
+        Optional <Account> accountOptional = accountService.getOptionalAccountById(id);
 
         //accountOptional.isPresent() checks if values are absent or null.
-        if (!accountOptional.isPresent()) {
+        if (accountOptional.isEmpty()) {
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account with this ID not found");
 
@@ -70,12 +66,12 @@ public class AccountController {
         Account account = accountOptional.get();
 
         //get authenticated client
-        Client authenticadedClient = clientRepository.findByEmail(authentication.getName());
+        Client authenticadedClient = clientService.getClientByEmail(authentication.getName());
 
         //checks if the authenticated client has associated the account that consults
         if (account.getClient().equals(authenticadedClient)){
 
-            AccountDTO accountDTO = new AccountDTO(account);
+            AccountDTO accountDTO = accountService.getAccountDTO(account);
 
             return ResponseEntity.ok(accountDTO);
 
@@ -92,14 +88,14 @@ public class AccountController {
     public ResponseEntity<Object> getAccounts(Authentication authentication){
 
         //get authenticated client
-        Client authenticatedClient = clientRepository.findByEmail(authentication.getName());
+        Client authenticatedClient = clientService.getClientByEmail(authentication.getName());
 
         if (authenticatedClient == null ) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized, login required");
         }
 
         // If the client is authenticated, get their accounts
-        List<Account> clientAccounts = accountRepository.findByClient(authenticatedClient);
+        List<Account> clientAccounts = accountService.getAccountsByClient(authenticatedClient);
 
         if (clientAccounts == null) {
 
@@ -108,9 +104,7 @@ public class AccountController {
         }
 
         // Convert Account objects to AccountDTO
-        List<AccountDTO> accountDTOs = clientAccounts.stream()
-                .map(account -> new AccountDTO(account))
-                .collect(Collectors.toList());
+        List<AccountDTO> accountDTOs = accountService.mapToAccountDTOList(clientAccounts);
 
 
         return ResponseEntity.ok(accountDTOs);
@@ -122,12 +116,12 @@ public class AccountController {
     public ResponseEntity<Object> createAccount(Authentication authentication) {
 
         // Look up the client by the authenticated username (I get email as username)
-        Client authenticatedClient = clientRepository.findByEmail(authentication.getName());
+        Client authenticatedClient = clientService.getClientByEmail(authentication.getName());
 
         if (authenticatedClient != null) {
 
             // get the list of authenticated client accounts
-            List<Account> accounts = accountRepository.findByClient(authenticatedClient);
+            List<Account> accounts = accountService.getAccountsByClient(authenticatedClient);
 
             // Check if the customer already has 3 accounts
             if (accounts.size() >= 3) {
@@ -147,19 +141,19 @@ public class AccountController {
 
                 // Check if the number is already in use on clients
                 String finalNumber = number;
-                accountNumberExists = clientRepository.findAll().stream()
-                        .anyMatch(client -> client.getAccounts().stream()
+                accountNumberExists = clientService.getClientsList().stream()
+                                .anyMatch(client -> client.getAccounts().stream()
                                 .anyMatch(account -> account.getNumber().equals(finalNumber)));
 
                 if (!accountNumberExists) {
                     //create new client account
-                    Account newAccount = new Account(finalNumber, LocalDate.now(), 0.0);
+                    Account newAccount = accountService.createAccount(finalNumber, LocalDate.now(), 0.0);
 
                     // Associate the account with the client
                     authenticatedClient.addAccount(newAccount);
 
                     //save account
-                    accountRepository.save(newAccount);
+                    accountService.saveAccount(newAccount);
                 }
 
 

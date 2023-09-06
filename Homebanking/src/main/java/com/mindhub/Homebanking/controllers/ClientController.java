@@ -5,6 +5,8 @@ import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
+import com.mindhub.Homebanking.services.AccountService;
+import com.mindhub.Homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -24,24 +26,21 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/api")
 public class ClientController {
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    AccountRepository accountRepository;
+    AccountService accountService;
 
     @RequestMapping("/clients")
     public List<ClientDTO> getClients() {
 
-        return clientRepository
-                .findAll()
-                .stream()
-                .map(client -> new ClientDTO(client))//o -> map(ClientDTO::new)
-                .collect(toList());
+        return clientService.getClientsDTO();
 
     }
+
 
     @RequestMapping(path = "/clients", method = RequestMethod.POST)
     public ResponseEntity<Object> register(
@@ -78,16 +77,16 @@ public class ClientController {
         }
 
 
-        if (clientRepository.findByEmail(email) !=  null) {
+        if (clientService.getClientByEmail(email) !=  null) {
 
             //return new ResponseEntity<>("mail already in use", HttpStatus.FORBIDDEN);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("mail already in use");
 
         }
 
-        Client newClient = new Client(firstName, lastName, email, passwordEncoder.encode(password));
+        Client newClient = clientService.createClient(firstName, lastName, email, passwordEncoder.encode(password));
 
-        clientRepository.save(newClient);
+        clientService.saveClient(newClient);
 
         //create aleatory account number
         // Generate the random account number
@@ -102,19 +101,19 @@ public class ClientController {
 
             // Check if the number is already in use on clients
             String finalNumber = number;
-            accountNumberExists = clientRepository.findAll().stream()
+            accountNumberExists = clientService.getClientsList().stream()
                     .anyMatch(client -> client.getAccounts().stream()
                     .anyMatch(account -> account.getNumber().equals(finalNumber)));
 
             if (!accountNumberExists){
                 //create new client account
-                Account newAccount = new Account(finalNumber,LocalDate.now(),0.0);
+                Account newAccount = accountService.createAccount(finalNumber,LocalDate.now(),0.0);
 
                 // Associate the account with the client
                 newClient.addAccount(newAccount);
 
                 //save account
-                accountRepository.save(newAccount);
+                accountService.saveAccount(newAccount);
             }
 
 
@@ -128,20 +127,16 @@ public class ClientController {
     @RequestMapping("/clients/{id}")
     public ResponseEntity<Object> getClient(@PathVariable Long id, Authentication authentication) {
 
-        Client authenticadedClient = clientRepository.findByEmail(authentication.getName());
+        Client authenticadedClient = clientService.getClientByEmail(authentication.getName());
 
         //Optional: class in Java to deal with values that may be absent or null.
-        Optional<Client> optionalClient = clientRepository.findById(id);
+        Client client = clientService.getClientById(id);
 
-        if (authenticadedClient != null && optionalClient.isPresent()){
-
-            //get client
-           Client clientById = optionalClient.get();
-
+        if (authenticadedClient != null && client != null){
             // Check if the authenticated client is the same client as the received id
-            if(authenticadedClient.getId().equals(clientById.getId())){
+            if(authenticadedClient.getId().equals(client.getId())){
 
-                ClientDTO clientDTO = new ClientDTO(clientById);
+                ClientDTO clientDTO = clientService.getClientDTO(client);
 
                 return ResponseEntity.ok( clientDTO);
 
@@ -169,13 +164,13 @@ public class ClientController {
     @RequestMapping("/clients/current")
     public ClientDTO getCurrentClient(Authentication authentication) {
 
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = clientService.getClientByEmail(authentication.getName());
 
         if (client == null) {
             throw new ResourceNotFoundException("Client not found");
         }
 
-        return new ClientDTO(client);
+        return clientService.getClientDTO(client);
     }
 
 }
