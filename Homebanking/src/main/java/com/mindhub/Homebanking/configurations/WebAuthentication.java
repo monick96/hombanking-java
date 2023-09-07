@@ -1,6 +1,7 @@
 package com.mindhub.Homebanking.configurations;
 
 import com.mindhub.Homebanking.models.Client;
+import com.mindhub.Homebanking.models.Role;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
                 //.endsWith()
                 //ensures that you are specifically checking if the desired domain
                 // is present at the end of the email address and not in other parts of the chain.
-                if(client.getEmail().endsWith("@mindhubbank.com")){
+                if(isAdminEmail(client.getEmail()) & client.getRole().equals(Role.ADMIN)){
 
                     return new User(client.getEmail(), client.getPassword(),
                             AuthorityUtils.createAuthorityList("ADMIN"));
@@ -60,4 +61,11 @@ public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder(){return PasswordEncoderFactories.createDelegatingPasswordEncoder();}
+
+    // Method to check if the email belongs to an administrator
+    public boolean isAdminEmail(String email) {
+
+        return email.endsWith("admin@mindhubbank.com");
+
+    }
 }

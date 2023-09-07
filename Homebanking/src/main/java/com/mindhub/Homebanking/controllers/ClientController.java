@@ -3,6 +3,7 @@ package com.mindhub.Homebanking.controllers;
 import com.mindhub.Homebanking.dtos.ClientDTO;
 import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
+import com.mindhub.Homebanking.models.Role;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.services.AccountService;
@@ -32,7 +33,7 @@ public class ClientController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
 
     @RequestMapping("/clients")
     public List<ClientDTO> getClients() {
@@ -66,7 +67,7 @@ public class ClientController {
 
                 missingField = "Email";
 
-            } else if (password.isBlank()) {
+            } else if (password.isEmpty()) {
 
                 missingField = "Password";
 
@@ -84,7 +85,7 @@ public class ClientController {
 
         }
 
-        Client newClient = clientService.createClient(firstName, lastName, email, passwordEncoder.encode(password));
+        Client newClient = clientService.createClient(firstName, lastName, email, passwordEncoder.encode(password), Role.CLIENT);
 
         clientService.saveClient(newClient);
 
@@ -105,19 +106,16 @@ public class ClientController {
                     .anyMatch(client -> client.getAccounts().stream()
                     .anyMatch(account -> account.getNumber().equals(finalNumber)));
 
-            if (!accountNumberExists){
-                //create new client account
-                Account newAccount = accountService.createAccount(finalNumber,LocalDate.now(),0.0);
-
-                // Associate the account with the client
-                newClient.addAccount(newAccount);
-
-                //save account
-                accountService.saveAccount(newAccount);
-            }
-
-
         }while(accountNumberExists);
+
+        //create new client account
+        Account newAccount = accountService.createAccount(number,LocalDate.now(),0.0);
+
+        // Associate the account with the client
+        newClient.addAccount(newAccount);
+
+        //save account
+        accountService.saveAccount(newAccount);
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Successful registration");

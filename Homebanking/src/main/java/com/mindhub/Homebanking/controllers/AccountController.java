@@ -137,28 +137,24 @@ public class AccountController {
             do {
                 // Generate a random number between 100000 and 999999
                 int numRandom = random.nextInt(900000) + 100000;
-                number = "VIN-" + numRandom;
+                 number = "VIN-" + numRandom;
 
                 // Check if the number is already in use on clients
-                String finalNumber = number;
+                String accountNumber = number;
                 accountNumberExists = clientService.getClientsList().stream()
                                 .anyMatch(client -> client.getAccounts().stream()
-                                .anyMatch(account -> account.getNumber().equals(finalNumber)));
-                //sacar fuera del while
-                if (!accountNumberExists) {
-                    //create new client account
-                    Account newAccount = accountService.createAccount(finalNumber, LocalDate.now(), 0.0);
-
-                    // Associate the account with the client
-                    authenticatedClient.addAccount(newAccount);
-
-                    //save account
-                    accountService.saveAccount(newAccount);
-                }
+                                .anyMatch(account -> account.getNumber().equals(accountNumber)));
 
             } while (accountNumberExists);
 
+            //create new client account
+            Account newAccount = accountService.createAccount(number, LocalDate.now(), 0.0);
 
+            // Associate the account with the client
+            authenticatedClient.addAccount(newAccount);
+
+            //save account
+            accountService.saveAccount(newAccount);
 
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Account created");
