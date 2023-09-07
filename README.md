@@ -87,5 +87,24 @@ The objectives of this task6 were:
   - A loan application must be created with the requested amount adding 20% of it
   - A "CREDIT" transaction must be created associated with the destination account (the amount must be positive) with the description concatenating the name of the loan and the phrase "loan approved"
   - The destination account must be updated adding the requested amount.
+  
+# Task10
+## Connect the app to PostgreSQL Server
+- This implies changing the H2 database manager (made in java) that runs in memory, so that the data is persistent when it is saved on the computer's disk, by PostgreSQL and taking advantage of the Hibernate ORM
+  - Environment settings
+  - Try the tool
+  - Read about database and practice
+  - Connect the application to the PostgreSQL database engine
+  - in pgAdmin:
+    - Create database
+    - create a user who manages the database and grant him the permissions
+    - In our Java project:
+      - In our project build file and dependency manager we add the line to implement PostgreSQL
+      - in our aplication.properties file:
+        - Configure the PostgreSQL database connection URL in the format `jdbc:postgresql://host:port/database`.
+        - Configure the database access credentials with `spring.datasource.username` and `spring.datasource.password:`
+        - Set the Hibernate dialect for PostgreSQL with `spring.jpa.properties.hibernate.dialect:`
+        - Tell Hibernate to automatically generate the database schema based on the entities in our project with `javaspring.jpa.generate-ddl=true:`
+        - Add the nex line to prevent Hibernate from automatically applying database schema changes at application startup: `spring.jpa.hibernate.ddl-auto=none` 
 
 
