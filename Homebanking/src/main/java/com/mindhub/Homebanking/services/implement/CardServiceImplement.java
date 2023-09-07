@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Service
 public class CardServiceImplement implements CardService {
     @Autowired
-    CardRepository cardRepository;
+    private CardRepository cardRepository;
 
     @Override
     public void saveCard(Card card) {

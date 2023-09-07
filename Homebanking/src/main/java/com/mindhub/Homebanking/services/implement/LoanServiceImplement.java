@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public class LoanServiceImplement implements LoanService {
     @Autowired
-    LoanRepository loanRepository;
+    private LoanRepository loanRepository;
 
     @Override
     public void saveLoan(Loan loan) {

@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toList;
 public class AccountServiceImplement implements AccountService {
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     @Override
     public void saveAccount(Account account) {

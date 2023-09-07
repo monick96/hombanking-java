@@ -14,7 +14,7 @@ import java.util.List;
 public class ClientLoanServiceImplement implements ClientLoanService {
 
     @Autowired
-    ClientLoanRepository clientLoanRepository;
+    private ClientLoanRepository clientLoanRepository;
 
     @Override
     public void saveClientLoan(ClientLoan clientLoan) {
