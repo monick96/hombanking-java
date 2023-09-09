@@ -13,6 +13,7 @@ public class Transaction {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
+    //   @Enumerated(EnumType.STRING) --> so that it takes the value in enum string and not the ordinal value
     private TransactionType type; // enum
 
     private long amount;

@@ -107,4 +107,9 @@ The objectives of this task6 were:
         - Tell Hibernate to automatically generate the database schema based on the entities in our project with `javaspring.jpa.generate-ddl=true:`
         - Add the nex line to prevent Hibernate from automatically applying database schema changes at application startup: `spring.jpa.hibernate.ddl-auto=none` 
 
-
+# Task11
+##  Improving the app
+- Be able to request the XML response format from the services
+- Improve the services code with new annotations to indicate the type of request.
+- Implement automated tests for services
+- Review the style in case we want to add any aesthetic details so that the application looks better.
