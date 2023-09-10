@@ -27,7 +27,7 @@ public class ClientLoanServiceImplement implements ClientLoanService {
     }
 
     @Override
-    public ClientLoan createClientLoan(Client client, Loan loan, int payments, long amount) {
+    public ClientLoan createClientLoan(Client client, Loan loan, int payments, double amount) {
         return new ClientLoan(client,loan,  payments, amount);
     }
 }

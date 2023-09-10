@@ -19,6 +19,10 @@ public class Account {
     private LocalDate creationDate;
     private double balance;
 
+    @Enumerated(EnumType.STRING)
+    private TypeAccount typeAccount;
+    //where SA is saving account and CA is current account
+
     // The "client" property represents a many-to-one relationship with the "Client" entity.
     // It establishes a connection between an account and the client it belongs to.
     @ManyToOne(fetch = FetchType.EAGER)
@@ -37,10 +41,19 @@ public class Account {
     }
 
     // Constructor with parameters to initialize all attributes
-    public Account(String number, LocalDate creationDate, double balance) {
+    public Account(String number, LocalDate creationDate, double balance, TypeAccount typeAccount) {
         this.number = number;
         this.creationDate = creationDate;
         this.balance = balance;
+        this.typeAccount= typeAccount;
+    }
+
+    public TypeAccount getTypeAccount() {
+        return typeAccount;
+    }
+
+    public void setTypeAccount(TypeAccount typeAccount) {
+        this.typeAccount = typeAccount;
     }
 
     public Long getId() {

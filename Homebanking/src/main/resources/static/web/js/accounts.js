@@ -5,6 +5,7 @@ Vue.createApp({
             clientInfo: {},
             errorToats: null,
             errorMsg: null,
+            typeAccount:null
         }
     },
     methods: {
@@ -32,7 +33,7 @@ Vue.createApp({
                 })
         },
         create: function () {
-            axios.post('/api/clients/current/accounts')
+            axios.post('/api/clients/current/accounts',`typeAccount=${this.typeAccount}`,config)
                 .then(response => window.location.reload())
                 .catch((error) => {
                     this.errorMsg = error.response.data;

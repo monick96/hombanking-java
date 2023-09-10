@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 public class TransactionServiceImplement implements TransactionService {
@@ -20,7 +21,12 @@ public class TransactionServiceImplement implements TransactionService {
     }
 
     @Override
-    public Transaction createTransaction(TransactionType type, long amount, String description, LocalDateTime date) {
+    public void deleteTransactions(Set<Transaction> transactions) {
+        transactionRepository.deleteAll(transactions);
+    }
+
+    @Override
+    public Transaction createTransaction(TransactionType type, double amount, String description, LocalDateTime date) {
         return new Transaction(type,amount,description,date);
     }
 }

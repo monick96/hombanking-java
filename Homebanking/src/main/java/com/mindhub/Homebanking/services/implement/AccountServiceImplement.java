@@ -3,6 +3,7 @@ package com.mindhub.Homebanking.services.implement;
 import com.mindhub.Homebanking.dtos.AccountDTO;
 import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
+import com.mindhub.Homebanking.models.TypeAccount;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,8 +64,13 @@ public class AccountServiceImplement implements AccountService {
     }
 
     @Override
-    public Account createAccount(String number, LocalDate creationDate, double balance) {
-        return new Account(number,creationDate,balance);
+    public Account createAccount(String number, LocalDate creationDate, double balance, TypeAccount typeAccount) {
+        return new Account(number,creationDate,balance,typeAccount);
+    }
+
+    @Override
+    public void deleteAccount(Account account) {
+        accountRepository.delete(account);
     }
 
 }

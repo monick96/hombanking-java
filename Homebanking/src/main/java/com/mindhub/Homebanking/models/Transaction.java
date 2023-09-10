@@ -16,7 +16,7 @@ public class Transaction {
     //   @Enumerated(EnumType.STRING) --> so that it takes the value in enum string and not the ordinal value
     private TransactionType type; // enum
 
-    private long amount;
+    private double amount;
     private String description;
     private LocalDateTime date;
     @ManyToOne(fetch = FetchType.EAGER)
@@ -27,7 +27,7 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(TransactionType type, long amount, String description, LocalDateTime date) {
+    public Transaction(TransactionType type, double amount, String description, LocalDateTime date) {
         this.type = type;
         // Using the ternary operator, adjust the amount based on the type of transaction
         // If it is debit, the amount becomes negative; if it's credit, it stays positive
@@ -49,11 +49,11 @@ public class Transaction {
         this.type = type;
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 

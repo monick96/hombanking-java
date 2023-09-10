@@ -29,7 +29,7 @@ public class CardController {
     @Autowired
     private ClientService clientService;
 
-    @RequestMapping(path = "/clients/current/cards", method = RequestMethod.POST)
+    @PostMapping("/clients/current/cards")
     public ResponseEntity <Object> createCard (
             @RequestParam CardColor cardColor,
             @RequestParam CardType cardType,

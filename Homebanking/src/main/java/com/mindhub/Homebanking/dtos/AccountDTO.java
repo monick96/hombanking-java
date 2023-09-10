@@ -3,6 +3,7 @@ package com.mindhub.Homebanking.dtos;
 import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
 import com.mindhub.Homebanking.models.Transaction;
+import com.mindhub.Homebanking.models.TypeAccount;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -17,6 +18,9 @@ public class AccountDTO {
     private LocalDate creationDate;
     private double balance;
 
+    //customize type account
+    private String typeAccount;
+
     //constructors
     public AccountDTO(){}
 
@@ -29,9 +33,10 @@ public class AccountDTO {
         this.number = account.getNumber();
         this.creationDate = account.getCreationDate();
         this.balance = account.getBalance();
+        this.typeAccount = account.getTypeAccount().getDisplayName();
     }
 
-    // Getters and setters
+    // Getters
     public Long getId() {
         return id;
     }
@@ -52,4 +57,7 @@ public class AccountDTO {
         return balance;
     }
 
+    public String getTypeAccount() {
+        return typeAccount;
+    }
 }

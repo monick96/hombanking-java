@@ -4,6 +4,7 @@ import com.mindhub.Homebanking.dtos.ClientDTO;
 import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
 import com.mindhub.Homebanking.models.Role;
+import com.mindhub.Homebanking.models.TypeAccount;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.services.AccountService;
@@ -35,7 +36,7 @@ public class ClientController {
     @Autowired
     private AccountService accountService;
 
-    @RequestMapping("/clients")
+    @GetMapping("/clients")
     public List<ClientDTO> getClients() {
 
         return clientService.getClientsDTO();
@@ -43,7 +44,7 @@ public class ClientController {
     }
 
 
-    @RequestMapping(path = "/clients", method = RequestMethod.POST)
+    @PostMapping("/clients")
     public ResponseEntity<Object> register(
 
             @RequestParam String firstName, @RequestParam String lastName,
@@ -109,7 +110,7 @@ public class ClientController {
         }while(accountNumberExists);
 
         //create new client account
-        Account newAccount = accountService.createAccount(number,LocalDate.now(),0.0);
+        Account newAccount = accountService.createAccount(number,LocalDate.now(),0.0, TypeAccount.SAVING_ACCOUNT);
 
         // Associate the account with the client
         newClient.addAccount(newAccount);
@@ -122,7 +123,7 @@ public class ClientController {
     }
 
 
-    @RequestMapping("/clients/{id}")
+    @GetMapping("/clients/{id}")
     public ResponseEntity<Object> getClient(@PathVariable Long id, Authentication authentication) {
 
         Client authenticadedClient = clientService.getClientByEmail(authentication.getName());
@@ -159,7 +160,7 @@ public class ClientController {
 
     }
 
-    @RequestMapping("/clients/current")
+    @GetMapping("/clients/current")
     public ClientDTO getCurrentClient(Authentication authentication) {
 
         Client client = clientService.getClientByEmail(authentication.getName());
