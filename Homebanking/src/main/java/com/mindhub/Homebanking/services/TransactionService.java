@@ -15,5 +15,5 @@ public interface TransactionService {
 
     Transaction createTransaction(TransactionType type, double amount, String description, LocalDateTime date);
 
-    List<Transaction>  getTransactionsByDateRange(Long accountId, LocalDate startDate, LocalDate endDate);
+    List<Transaction>  getTransactionsByDateRange(Long accountId, LocalDateTime startDate, LocalDateTime endDate);
 }

@@ -35,7 +35,7 @@ public class TransactionServiceImplement implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getTransactionsByDateRange(Long accountId, LocalDate startDate, LocalDate endDate) {
+    public List<Transaction> getTransactionsByDateRange(Long accountId, LocalDateTime startDate, LocalDateTime endDate) {
 
         return transactionRepository.findByAccountIdAndDateBetween(accountId, startDate, endDate);
 

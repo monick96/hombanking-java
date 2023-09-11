@@ -14,9 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -98,6 +100,83 @@ public class AccountController {
         }
 
     }
+
+
+    //The HTTP response that returns a file, such as a
+    // PDF, is typically handled by sending the file data
+    // in an array of bytes (byte[]).
+    // This is because binary data, such as a PDF file,
+    // can be represented as a sequence of bytes.
+    @GetMapping("/accounts/{id}/statement")
+    public ResponseEntity<byte[]>downlandStatement(
+            @PathVariable Long id, @RequestParam LocalDateTime startDate,
+            @RequestParam LocalDateTime endDate, Authentication authentication){
+        //validar que start no sea posterior a end
+        //check if client login
+        if (authentication == null || !authentication.isAuthenticated()) {
+
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Unauthorized, login required");
+
+        }
+
+        //check if fields are null
+        if ((id == null) || (startDate == null) || (endDate == null)) {
+
+            String missingField = "";
+
+            if (id == null) {
+
+                missingField = "Id";
+
+            } else if (startDate == null) {
+
+                missingField = "Start Date";
+
+            } else if (endDate == null) {
+
+                missingField = "End Date";
+
+            }
+
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,missingField + " are required.");
+
+        }
+
+        //get the optional account by ID
+        Optional <Account> accountOptional = accountService.getOptionalAccountById(id);
+
+        //accountOptional.isPresent() checks if values are absent or null.
+        if (accountOptional.isEmpty()) {
+
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Account with this ID not found");
+
+        }
+
+        //get account
+        Account account = accountOptional.get();
+
+        //get authenticated client
+        Client authenticadedClient = clientService.getClientByEmail(authentication.getName());
+
+        //checks if the authenticated client has associated the account that consults
+        if (!account.getClient().equals(authenticadedClient)){
+
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You are not authorized to access this information.");
+
+        }
+
+        // Get transactions in date range
+        List<Transaction> transactionList = transactionService.getTransactionsByDateRange(id,startDate,endDate);
+
+
+        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "This resources is in construction");
+
+
+
+
+    }
+
+
 
     //create get request to "/clients/current/accounts"
     @GetMapping("/clients/current/accounts")

@@ -54,7 +54,7 @@ public class HomebankingApplication {
 			Transaction transaction4 = new Transaction(TransactionType.CREDIT,25000,"Payments", LocalDateTime.now());
 			Transaction transaction5 = new Transaction(TransactionType.DEBIT,5000,"Shopping", LocalDateTime.now());
 			Transaction transaction6 = new Transaction(TransactionType.CREDIT,15000,"Promotions", LocalDateTime.now());
-
+			System.out.println(transaction1.getDate());
 			//Creating loan and payments
 			List<Integer> payments1 = Arrays.asList(12, 24, 36, 48, 60);
 			List<Integer> payments2 = Arrays.asList(6, 12, 24);
