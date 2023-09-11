@@ -7,7 +7,9 @@ import com.mindhub.Homebanking.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -27,6 +29,15 @@ public class TransactionServiceImplement implements TransactionService {
 
     @Override
     public Transaction createTransaction(TransactionType type, double amount, String description, LocalDateTime date) {
+
         return new Transaction(type,amount,description,date);
+
+    }
+
+    @Override
+    public List<Transaction> getTransactionsByDateRange(Long accountId, LocalDate startDate, LocalDate endDate) {
+
+        return transactionRepository.findByAccountIdAndDateBetween(accountId, startDate, endDate);
+
     }
 }

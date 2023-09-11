@@ -12,6 +12,8 @@ public interface CardService {
 
     boolean cardExistsByNumber(String number);
 
+    Card getCardByNumber(String number);
+
     boolean cardExistsByCvv(int cvv);
 
     Card createCard(CardType type, CardColor color, String number, LocalDate fromDate, LocalDate thruDate, int cvv, String cardHolder);

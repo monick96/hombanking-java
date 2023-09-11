@@ -1,9 +1,7 @@
 package com.mindhub.Homebanking.controllers;
 
-import com.mindhub.Homebanking.models.Account;
-import com.mindhub.Homebanking.models.Client;
-import com.mindhub.Homebanking.models.Transaction;
-import com.mindhub.Homebanking.models.TransactionType;
+import com.mindhub.Homebanking.dtos.CardPayDTO;
+import com.mindhub.Homebanking.models.*;
 import com.mindhub.Homebanking.repositories.AccountRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.repositories.TransactionRepository;
@@ -18,8 +16,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api")
@@ -33,6 +37,9 @@ public class TransactionController {
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    CardService cardService;
 
     @Transactional
     @PostMapping("/transactions")
@@ -137,6 +144,120 @@ public class TransactionController {
         accountService.saveAccount(destinationAccount);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Transaction created successfully.");
+
+    }
+
+    @Transactional
+    @PostMapping("/transactions/pay")
+    public ResponseEntity<Object> payWithCard(@RequestBody CardPayDTO cardPayDTO){
+
+        if (cardPayDTO == null) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("All data must be completed");
+
+        }
+
+        if (cardPayDTO.getDescription() == null || cardPayDTO.getDescription().isEmpty()) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Description is required");
+
+        }
+
+        if (cardPayDTO.getNumber() == null || cardPayDTO.getNumber().isEmpty()) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Card number is required");
+
+        }
+
+        //verify cvv format
+        if (cardPayDTO.getCvv() < 100 || cardPayDTO.getCvv() > 999) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The CVV must be a 3-digit integer.");
+
+        }
+
+        if (cardPayDTO.getAmount() <= 0) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Amount must be greater than zero");
+        }
+
+        // Check the card number format (xxxx-xxxx-xxxx-xxxx)
+        String cardNumber = cardPayDTO.getNumber();
+
+        //create pattern to compare
+        Pattern cardNumberPattern = Pattern.compile("^\\d{4}-\\d{4}-\\d{4}-\\d{4}$");
+
+        //Create a Matcher object that allows you to perform regular expression matches
+        // on the cardNumber string. It is initialized with the card number.
+        Matcher cardNumberMatcher = cardNumberPattern.matcher(cardNumber);
+
+        //The matches() method is a method provided by the Matcher class of
+        // the java.util.regex library. It is used to check if the entire
+        // string matches the pattern defined by a regular expression.
+        if (!cardNumberMatcher.matches()) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid card format");
+
+        }
+
+
+        //verify this card exist in our database and get expiration date from card
+        if (!cardService.cardExistsByNumber(cardPayDTO.getNumber())) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid card number,verify that the numbers entered are correct");
+
+        }
+
+        //get card by number
+        Card card = cardService.getCardByNumber(cardPayDTO.getNumber());
+
+        //get current date
+        LocalDate currentDate = LocalDate.now();
+
+        if (card.getThruDate().isBefore(currentDate)) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The card is expired");
+
+        }
+
+        ///verify that card have associated de cvv entered
+        if (!(card.getNumber().equals(cardPayDTO.getNumber())) || (card.getCvv() != cardPayDTO.getCvv())) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The data entered does not match");
+
+        }
+
+        //obtain the client account associated with the card
+        Set <Account> accounts = card.getClient().getAccounts();
+        List<Account> accountList = new ArrayList<>(accounts);
+
+        if (accountList.isEmpty()) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("There are no associated accounts");
+
+        }
+
+        Account firstAccount = accountList.get(0);
+
+        if (firstAccount.getBalance() < cardPayDTO.getAmount()) {
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient funds");
+
+        }
+
+        //create transaction
+        Transaction payTransaction = transactionService.createTransaction(TransactionType.DEBIT,cardPayDTO.getAmount(),cardPayDTO.getDescription(),LocalDateTime.now());
+
+        //associated transaction with account
+        firstAccount.addTransaction(payTransaction);
+
+        //set account balance
+        firstAccount.setBalance(firstAccount.getBalance() - payTransaction.getAmount());
+
+        //saves
+        transactionService.saveTransaction(payTransaction);
+        accountService.saveAccount(firstAccount);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Successfully transaction");
 
     }
 

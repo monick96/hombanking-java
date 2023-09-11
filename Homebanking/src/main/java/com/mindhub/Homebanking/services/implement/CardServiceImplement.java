@@ -26,6 +26,11 @@ public class CardServiceImplement implements CardService {
     }
 
     @Override
+    public Card getCardByNumber(String number) {
+        return cardRepository.findByNumber(number);
+    }
+
+    @Override
     public boolean cardExistsByCvv(int cvv) {
         return cardRepository.existsByCvv(cvv);
     }
