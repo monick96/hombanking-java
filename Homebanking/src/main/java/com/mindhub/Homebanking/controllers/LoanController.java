@@ -149,7 +149,7 @@ public class LoanController {
         authenticadedClient.addClientLoan(loanRequest);
 
         //create a “CREDIT” transaction
-        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,loanApplicationDTO.getAmount(),loanRequest.getLoan().getName()+ "Loan approved", LocalDateTime.now());
+        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,loanApplicationDTO.getAmount(),loanRequest.getLoan().getName()+ "Loan approved", LocalDateTime.now(),true);
 
         //link transaction with account
         destinationAccount.addTransaction(creditTransaction);

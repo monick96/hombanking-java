@@ -24,14 +24,23 @@ public class TransactionServiceImplement implements TransactionService {
     }
 
     @Override
-    public void deleteTransactions(Set<Transaction> transactions) {
-        transactionRepository.deleteAll(transactions);
+    public void saveAllTransactions(List<Transaction> transactions) {
+        transactionRepository.saveAll(transactions);
     }
 
     @Override
-    public Transaction createTransaction(TransactionType type, double amount, String description, LocalDateTime date) {
+    public void deactivateTransactions(List<Transaction> transactions) {
 
-        return new Transaction(type,amount,description,date);
+        for (Transaction transaction : transactions) {
+            transaction.setActive(false);
+        }
+
+    }
+
+    @Override
+    public Transaction createTransaction(TransactionType type, double amount, String description, LocalDateTime date, boolean active) {
+
+        return new Transaction(type,amount,description,date,true);
 
     }
 

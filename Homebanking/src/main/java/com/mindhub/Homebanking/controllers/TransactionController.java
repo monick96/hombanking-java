@@ -128,8 +128,8 @@ public class TransactionController {
         }
 
         //create transactions
-        Transaction debitTransaction = transactionService.createTransaction(TransactionType.DEBIT,amount,description + " (DEBIT " + "to " + toAccountNumber + ")", LocalDateTime.now());
-        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,amount,description + " (CREDIT " + "from "+ fromAccountNumber + ")", LocalDateTime.now());
+        Transaction debitTransaction = transactionService.createTransaction(TransactionType.DEBIT,amount,description + " (DEBIT " + "to " + toAccountNumber + ")", LocalDateTime.now(),true);
+        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,amount,description + " (CREDIT " + "from "+ fromAccountNumber + ")", LocalDateTime.now(),true);
 
         //link transaction with account
         originAccount.addTransaction(debitTransaction);
@@ -256,7 +256,7 @@ public class TransactionController {
         }
 
         //create transaction
-        Transaction payTransaction = transactionService.createTransaction(TransactionType.DEBIT,cardPayDTO.getAmount(),cardPayDTO.getDescription(),LocalDateTime.now());
+        Transaction payTransaction = transactionService.createTransaction(TransactionType.DEBIT,cardPayDTO.getAmount(),cardPayDTO.getDescription(),LocalDateTime.now(),true);
 
         //associated transaction with account
         firstAccount.addTransaction(payTransaction);
