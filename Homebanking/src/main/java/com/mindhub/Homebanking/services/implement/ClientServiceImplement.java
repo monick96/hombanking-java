@@ -29,7 +29,7 @@ public class ClientServiceImplement implements ClientService {
         return clientRepository
                 .findAll()
                 .stream()
-                .map(client -> new ClientDTO(client))//o -> map(ClientDTO::new)
+                .map(client -> this.getClientDTO(client))//o -> map(ClientDTO::new)
                 .collect(toList());
     }
 

@@ -24,7 +24,8 @@ public interface AccountService {
 
     AccountDTO getAccountDTO(Account account);
 
-    Account createAccount(String number, LocalDate creationDate, double balance, TypeAccount typeAccount);
+    Account createAccount(String number, LocalDate creationDate, double balance, TypeAccount typeAccount,boolean active);
 
-    void deleteAccount(Account account);
+    void deactivateAccount(Account account,boolean active);
+
 }

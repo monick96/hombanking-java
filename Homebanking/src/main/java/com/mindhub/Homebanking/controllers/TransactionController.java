@@ -24,7 +24,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class TransactionController {
@@ -40,6 +42,8 @@ public class TransactionController {
 
     @Autowired
     CardService cardService;
+
+
 
     @Transactional
     @PostMapping("/transactions")
@@ -124,8 +128,8 @@ public class TransactionController {
         }
 
         //create transactions
-        Transaction debitTransaction = transactionService.createTransaction(TransactionType.DEBIT,amount,description + " (DEBIT " + fromAccountNumber + ")", LocalDateTime.now());
-        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,amount,description + " (CREDIT " + toAccountNumber + ")", LocalDateTime.now());
+        Transaction debitTransaction = transactionService.createTransaction(TransactionType.DEBIT,amount,description + " (DEBIT " + "to " + toAccountNumber + ")", LocalDateTime.now());
+        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,amount,description + " (CREDIT " + "from "+ fromAccountNumber + ")", LocalDateTime.now());
 
         //link transaction with account
         originAccount.addTransaction(debitTransaction);
@@ -146,6 +150,7 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Transaction created successfully.");
 
     }
+
 
     @Transactional
     @PostMapping("/transactions/pay")
@@ -213,6 +218,7 @@ public class TransactionController {
         //get current date
         LocalDate currentDate = LocalDate.now();
 
+        //verify card expiration date
         if (card.getThruDate().isBefore(currentDate)) {
 
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The card is expired");
@@ -227,7 +233,11 @@ public class TransactionController {
         }
 
         //obtain the client account associated with the card
-        Set <Account> accounts = card.getClient().getAccounts();
+        Set <Account> accounts = card.getClient().getAccounts()
+                .stream()
+                .filter(Account::isActive) // Filtra solo las cuentas activas
+                .collect(Collectors.toSet());
+
         List<Account> accountList = new ArrayList<>(accounts);
 
         if (accountList.isEmpty()) {
@@ -237,6 +247,7 @@ public class TransactionController {
         }
 
         Account firstAccount = accountList.get(0);
+        System.out.println(firstAccount.getId());
 
         if (firstAccount.getBalance() < cardPayDTO.getAmount()) {
 
@@ -255,6 +266,7 @@ public class TransactionController {
 
         //saves
         transactionService.saveTransaction(payTransaction);
+
         accountService.saveAccount(firstAccount);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Successfully transaction");

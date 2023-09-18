@@ -31,6 +31,7 @@ public class ClientDTO {
         // Create a new HashSet instance and add each AccountDTO
         this.accounts = client.getAccounts()
                 .stream()
+                .filter(Account::isActive)
                 .map(account -> new AccountDTO(account))
                 .collect(toSet());
         this.firstName = client.getFirstName();

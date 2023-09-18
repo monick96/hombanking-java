@@ -1,5 +1,6 @@
 package com.mindhub.Homebanking.services.implement;
 
+import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Transaction;
 import com.mindhub.Homebanking.models.TransactionType;
 import com.mindhub.Homebanking.repositories.TransactionRepository;
@@ -39,5 +40,9 @@ public class TransactionServiceImplement implements TransactionService {
 
         return transactionRepository.findByAccountIdAndDateBetween(accountId, startDate, endDate);
 
+    }
+
+    public List<Transaction> getTransactionsByAccount(Account account) {
+        return transactionRepository.findByAccountAndAccountActiveIsTrue(account);
     }
 }

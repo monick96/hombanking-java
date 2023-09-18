@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -110,7 +111,7 @@ public class ClientController {
         }while(accountNumberExists);
 
         //create new client account
-        Account newAccount = accountService.createAccount(number,LocalDate.now(),0.0, TypeAccount.SAVING_ACCOUNT);
+        Account newAccount = accountService.createAccount(number,LocalDate.now(),0.0, TypeAccount.SAVING_ACCOUNT,true);
 
         // Associate the account with the client
         newClient.addAccount(newAccount);
@@ -165,8 +166,14 @@ public class ClientController {
 
         Client client = clientService.getClientByEmail(authentication.getName());
 
-        if (client == null) {
-            throw new ResourceNotFoundException("Client not found");
+        if (client == null ) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Unauthorized, login required");
+        }
+
+        List<Account> activeAccounts = accountService.getAccountsByClient(client);
+
+        if (activeAccounts.isEmpty()) {
+            throw new ResponseStatusException (HttpStatus.FORBIDDEN,"No active accounts found for the current client.");
         }
 
         return clientService.getClientDTO(client);

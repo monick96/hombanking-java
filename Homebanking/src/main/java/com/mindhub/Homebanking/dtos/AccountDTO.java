@@ -17,6 +17,7 @@ public class AccountDTO {
     private String number;
     private LocalDate creationDate;
     private double balance;
+    private boolean active;
 
     //customize type account
     private String typeAccount;
@@ -34,9 +35,14 @@ public class AccountDTO {
         this.creationDate = account.getCreationDate();
         this.balance = account.getBalance();
         this.typeAccount = account.getTypeAccount().getDisplayName();
+        this.active = account.isActive();
     }
 
     // Getters
+
+
+    public boolean isActive() {return active;}
+
     public Long getId() {
         return id;
     }

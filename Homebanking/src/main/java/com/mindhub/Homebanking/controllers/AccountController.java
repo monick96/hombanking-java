@@ -5,11 +5,10 @@ import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
 import com.mindhub.Homebanking.models.Transaction;
 import com.mindhub.Homebanking.models.TypeAccount;
-import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.services.AccountService;
 import com.mindhub.Homebanking.services.ClientService;
 import com.mindhub.Homebanking.services.TransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,11 +35,14 @@ public class AccountController {
 //    @Autowired
 //    private TransactionService transactionService;
 
-    private AccountService accountService;
+//    @Autowired
+//    TemplateEngine templateEngine;
 
-    private ClientService clientService;
+    private final AccountService accountService;
 
-    private TransactionService transactionService;
+    private final ClientService clientService;
+
+    private final TransactionService transactionService;
 
     public AccountController(AccountService accountService, ClientService clientService, TransactionService transactionService) {
         this.accountService = accountService;
@@ -86,8 +88,8 @@ public class AccountController {
         //get authenticated client
         Client authenticadedClient = clientService.getClientByEmail(authentication.getName());
 
-        //checks if the authenticated client has associated the account that consults
-        if (account.getClient().equals(authenticadedClient)){
+        //checks if the authenticated client has associated the account that consults and if de account is active
+        if (account.getClient().equals(authenticadedClient) && account.isActive()){
 
             AccountDTO accountDTO = accountService.getAccountDTO(account);
 
@@ -108,9 +110,10 @@ public class AccountController {
     // This is because binary data, such as a PDF file,
     // can be represented as a sequence of bytes.
     @GetMapping("/accounts/{id}/statement")
+    //terminar//poner la comprobacion que sea cuenta activa
     public ResponseEntity<byte[]>downlandStatement(
-            @PathVariable Long id, @RequestParam LocalDateTime startDate,
-            @RequestParam LocalDateTime endDate, Authentication authentication){
+            @PathVariable Long id, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate, Authentication authentication){
         //validar que start no sea posterior a end
         //check if client login
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -142,6 +145,18 @@ public class AccountController {
 
         }
 
+        if (startDate.isAfter(endDate)) {
+
+            throw new IllegalArgumentException("Start Date must be before End Date");
+
+        }
+
+        if (!endDate.isEqual(endDate) || endDate.isBefore(startDate)) {
+
+            throw new IllegalArgumentException("End Date must be equal or after End Date");
+
+        }
+
         //get the optional account by ID
         Optional <Account> accountOptional = accountService.getOptionalAccountById(id);
 
@@ -168,18 +183,66 @@ public class AccountController {
         // Get transactions in date range
         List<Transaction> transactionList = transactionService.getTransactionsByDateRange(id,startDate,endDate);
 
+        if (transactionList == null) {
+
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"There are no transactions in the indicated date range");
+
+        }
+
+//        // Generate PDF
+//        // create a new document PDF
+//        PDDocument document = new PDDocument();//blank pdf
+//
+//        // create a page for document
+//        PDPage page = new PDPage(PDRectangle.A4);
+//        document.addPage(page);
+//
+//        // Create an object that is responsible to write to the page
+//        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+//
+//        //Add content to PDF
+//        //Sets the font and font size to use for the text
+//
+//        contentStream.setFont(PDType1Font font, 12);
+
+//        Context context = new Context();
+//        context.setVariable("account", account);
+//        context.setVariable("transactions", transactionList);
+//        String html = templateEngine.process("statement", context);
+//
+//        // Generate PDF
+//        // Generar PDF
+//        byte[] pdf = null;
+
+//        try {
+//
+//            Document document = new Document();
+//            PdfWriter writer = PdfWriter.getInstance(document, new ByteArrayOutputStream());
+//
+//            document.open();
+//
+//            XMLWorkerHelper.getInstance().parseXHtml(writer, document, new StringReader(html));
+//
+//            document.close();
+//
+//            pdf = ((ByteArrayOutputStream)writer.getOutputStream()).toByteArray();
+//
+//        } catch (Exception e) {
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error generating PDF");
+//        }
+//
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=statement.pdf")
+//                .body(pdf);
+
 
         throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "This resources is in construction");
 
 
-
-
     }
 
-
-
     //create get request to "/clients/current/accounts"
-    @GetMapping("/clients/current/accounts")
+    @RequestMapping(path = "/clients/current/accounts")
     public ResponseEntity<Object> getAccounts(Authentication authentication){
 
         //get authenticated client
@@ -189,8 +252,11 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized, login required");
         }
 
-        // If the client is authenticated, get their accounts
-        List<Account> clientAccounts = accountService.getAccountsByClient(authenticatedClient);
+        // If the client is authenticated, get their active accounts
+        List<Account> clientAccounts = accountService.getAccountsByClient(authenticatedClient)
+                .stream()
+                .filter(Account::isActive)
+                .collect(Collectors.toList());
 
         if (clientAccounts == null) {
 
@@ -206,6 +272,7 @@ public class AccountController {
 
     }
 
+
     //create account
     @PostMapping("/clients/current/accounts")
     public ResponseEntity<Object> createAccount(@RequestParam TypeAccount typeAccount, Authentication authentication) {
@@ -216,11 +283,19 @@ public class AccountController {
         if (authenticatedClient != null) {
 
             // get the list of authenticated client accounts
-            List<Account> accounts = accountService.getAccountsByClient(authenticatedClient);
+            List<Account> accounts = accountService.getAccountsByClient(authenticatedClient)
+                    .stream()
+                    .filter(Account::isActive)
+                    .collect(Collectors.toList());
 
             // Check if the customer already has 3 accounts
             if (accounts.size() >= 3) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only have up to three accounts.");
+            }
+
+            // Check if typeAccount is null
+            if (typeAccount == null) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Type of account is required.");
             }
 
             //create aleatory account number
@@ -243,7 +318,7 @@ public class AccountController {
             } while (accountNumberExists);
 
             //create new client account
-            Account newAccount = accountService.createAccount(number, LocalDate.now(), 0.0,typeAccount);
+            Account newAccount = accountService.createAccount(number, LocalDate.now(), 0.0,typeAccount,true);
 
             // Associate the account with the client
             authenticatedClient.addAccount(newAccount);
@@ -264,8 +339,8 @@ public class AccountController {
     }
 
     @Transactional
-    @DeleteMapping("/accounts/{id}")
-    public ResponseEntity<Object> deleteAccount(@PathVariable Long id, Authentication authentication){
+    @PatchMapping("/accounts/{id}")
+    public ResponseEntity<Object> deactivateAccount(@PathVariable Long id, Authentication authentication){
 
         //checks if the user is authenticated
         //(authentication == null) checks if a user has not tried to authenticate at all
@@ -307,9 +382,13 @@ public class AccountController {
         }
 
         //delete account transactions
-        transactionService.deleteTransactions(account.getTransactions());
+        //transactionService.deleteTransactions(account.getTransactions());
 
-        accountService.deleteAccount(account);
+        //accountService.deactivateAccount(account,false);
+
+        account.setActive(false);
+
+        accountService.saveAccount(account);
 
         return ResponseEntity.ok("Successfully deleted account");
 

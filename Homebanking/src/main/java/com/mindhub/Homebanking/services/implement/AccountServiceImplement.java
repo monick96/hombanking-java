@@ -43,34 +43,41 @@ public class AccountServiceImplement implements AccountService {
 
     @Override
     public Optional<Account> getOptionalAccountById(Long id) {
+
         return accountRepository.findById(id);
+
     }
 
     @Override
     public List<Account> getAccountsByClient(Client client) {
+
         return accountRepository.findByClient(client);
+
     }
+
 
     @Override
     public List<AccountDTO> mapToAccountDTOList(List<Account> accounts) {
         return accounts.stream()
+                .filter(account -> account.isActive())
                 .map(account -> this.getAccountDTO(account))
                 .collect(Collectors.toList());
     }
 
     @Override
     public AccountDTO getAccountDTO(Account account) {
+
         return new AccountDTO(account);
     }
 
     @Override
-    public Account createAccount(String number, LocalDate creationDate, double balance, TypeAccount typeAccount) {
-        return new Account(number,creationDate,balance,typeAccount);
+    public Account createAccount(String number, LocalDate creationDate, double balance, TypeAccount typeAccount,boolean active) {
+        return new Account(number,creationDate,balance,typeAccount,active);
     }
 
     @Override
-    public void deleteAccount(Account account) {
-        accountRepository.delete(account);
+    public void deactivateAccount(Account account,boolean active) {
+        account.setActive(active);
     }
 
 }

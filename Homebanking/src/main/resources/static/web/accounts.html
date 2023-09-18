@@ -82,6 +82,13 @@
                     <div class="row mt-3">
                         <div class="col">
                             <h2 class="display-6 subtitle">Accounts</h2>
+                            <div class="form-group">
+                                <label v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3" for="accountType">Account Type:</label>
+                                <select v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3" v-model="typeAccount" class="form-control" id="accountType">
+                                    <option value="CURRENT_ACCOUNT">Current Account</option>
+                                    <option value="SAVING_ACCOUNT">Savings Account</option>
+                                </select>
+                            </div>
                             <button v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3"
                                 v-on:click="create" id="create" class="btn btn-sm btn-success">Create</button>
                         </div>
