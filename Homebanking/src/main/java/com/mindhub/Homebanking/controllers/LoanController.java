@@ -155,7 +155,7 @@ public class LoanController {
         destinationAccount.addTransaction(creditTransaction);
 
         //Update the destination account by adding the requested amount.
-        destinationAccount.setBalance(destinationAccount.getBalance() + loanRequest.getAmount());
+        destinationAccount.setBalance(destinationAccount.getBalance() + creditTransaction.getAmount());
 
         //save in repositories
         clientLoanService.saveClientLoan(loanRequest);

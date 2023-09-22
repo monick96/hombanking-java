@@ -11,7 +11,8 @@ Vue.createApp({
             accountToNumber: "VIN",
             totalLoan:0,
             amount: 0,
-            fees: []
+            fees: [],
+            loanToConfirm:null
         }
     },
     methods: {
@@ -47,7 +48,29 @@ Vue.createApp({
                 this.errorMsg = "You must indicate an amount";
                 this.errorToats.show();
             } else {
-                this.modal.show();
+                // search loan type by ID
+                const selectedLoanType = this.loanTypes.find(loanType => loanType.id == this.loanTypeId);
+
+                if (selectedLoanType) {
+                    // Assign loan information to loanToConfirm to
+                    //display in confirmation modal
+                    this.loanToConfirm = {
+                        loanType: selectedLoanType,
+                        payments: this.payments,
+                        accountNumber: this.accountToNumber,
+                        amount: this.amount,
+                        total:this.totalLoan
+                    };
+
+                    //console.log(this.loanToConfirm)
+
+                    this.modal.show();
+                }else{
+                    this.errorMsg = "Invalid loan type selected";
+                    this.errorToats.show();
+
+                }
+
             }
         },
         apply: function () {
