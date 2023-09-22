@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -23,14 +24,14 @@ public class HomebankingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HomebankingApplication.class, args);
 	}
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	//password encryption
-	@Bean
-	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
-		return (args -> {
-			//creating client instances
+//
+//	@Autowired
+//	private PasswordEncoder passwordEncoder;
+//	//password encryption
+//	@Bean
+//	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository, LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
+//		return (args -> {
+//			//creating client instances
 //			Client client1 = new Client("Melba","Morel","melba@mindhub.com", passwordEncoder.encode("4lf4"),Role.CLIENT);
 //
 //			Client client2 = new Client("Javier","Miller","miller@gmail.com", passwordEncoder.encode("m3g4"),Role.CLIENT);
@@ -39,13 +40,13 @@ public class HomebankingApplication {
 //
 //			//accounts
 //			//melba's first account
-//			Account account1 = new Account("VIN-001",LocalDate.now(),5000.0);
+//			Account account1 = new Account("VIN-001",LocalDate.now(),5000.0,TypeAccount.CURRENT_ACCOUNT,true);
 //
 //			//melba's second account
-//			Account account2 = new Account("VIN-002",LocalDate.now().plusDays(1),7500.0);
+//			Account account2 = new Account("VIN-002",LocalDate.now().plusDays(1),7500.0,TypeAccount.SAVING_ACCOUNT,true);
 //
 //			//javier's account
-//			Account account3 = new Account("VIN-003",LocalDate.now().plusDays(5),75000.0);
+//			Account account3 = new Account("VIN-003",LocalDate.now().plusDays(5),75000.0,TypeAccount.SAVING_ACCOUNT,true);
 //
 //			//Transactions
 //			Transaction transaction1 = new Transaction(TransactionType.CREDIT,60000,"Fees", LocalDateTime.now());
@@ -54,7 +55,7 @@ public class HomebankingApplication {
 //			Transaction transaction4 = new Transaction(TransactionType.CREDIT,25000,"Payments", LocalDateTime.now());
 //			Transaction transaction5 = new Transaction(TransactionType.DEBIT,5000,"Shopping", LocalDateTime.now());
 //			Transaction transaction6 = new Transaction(TransactionType.CREDIT,15000,"Promotions", LocalDateTime.now());
-//
+//			System.out.println(transaction1.getDate());
 //			//Creating loan and payments
 //			List<Integer> payments1 = Arrays.asList(12, 24, 36, 48, 60);
 //			List<Integer> payments2 = Arrays.asList(6, 12, 24);
@@ -169,10 +170,10 @@ public class HomebankingApplication {
 //			cardRepository.save(card1);
 //			cardRepository.save(card2);
 //			cardRepository.save(card3);
-
-
-
-		});
-	}
+//
+//
+//
+//		});
+//	}
 
 }

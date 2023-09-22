@@ -19,12 +19,18 @@ public class WebAuthorization{
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
+        http.cors();
         http.authorizeRequests()
                 .antMatchers("/web/index.html", "/web/js/index.js", "/web/css/**", "/web/img/**").permitAll()
 
 
                 .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
+
+
+                .antMatchers(HttpMethod.POST,"/api/transactions/pay").permitAll()
+
+
+                .antMatchers(HttpMethod.PATCH,"/api/accounts/{id}").hasAnyAuthority("CLIENT","ADMIN")
 
 
                 .antMatchers(HttpMethod.GET,"/api/clients/{id}", "/api/accounts/{id}", "/api/loans").hasAnyAuthority("CLIENT","ADMIN")
@@ -34,6 +40,9 @@ public class WebAuthorization{
 
 
                 .antMatchers(HttpMethod.POST,"/api/transactions", "/api/loans").hasAuthority("CLIENT")
+
+
+                .antMatchers(HttpMethod.GET,"/api/accounts/{id}/statement").hasAnyAuthority("CLIENT","ADMIN")
 
 
                 .antMatchers(HttpMethod.GET,"/api/clients/current", "/api/clients/current/cards", "/api/clients/current/accounts").hasAnyAuthority("CLIENT","ADMIN")

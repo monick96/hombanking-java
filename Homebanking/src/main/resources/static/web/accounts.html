@@ -82,16 +82,25 @@
                     <div class="row mt-3">
                         <div class="col">
                             <h2 class="display-6 subtitle">Accounts</h2>
+                            <div class="form-group">
+                                <label v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3" for="accountType">Account Type:</label>
+                                <select v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3" v-model="typeAccount" class="form-control" id="accountType">
+                                    <option value="CURRENT_ACCOUNT">Current Account</option>
+                                    <option value="SAVING_ACCOUNT">Savings Account</option>
+                                </select>
+                            </div>
                             <button v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3"
                                 v-on:click="create" id="create" class="btn btn-sm btn-success">Create</button>
                         </div>
                     </div>
                     <div class="row mx-2">
                         <div v-for="account in clientInfo.accounts" class="col-12 col-md-4 mt-2 ">
-                            <a class="account-link" v-bind:href="'/web/account.html?id='+account.id">
+                            <a class="account-link" :href="'/web/account.html?id='+account.id">
                                 <div class="card border-0 account">
                                     <div class="card-body">
-                                        <h5 class="card-title">{{ account.number }}</h5>
+                                        <h5 class="card-title">{{account.typeAccount == 'Current Account' ? '$CA': '$SA'}}
+                                            {{ account.number }}
+                                        </h5>
                                         <p class="card-text"> {{ formatDate(account.creationDate) }}</p>
                                         <p class="text-center lead account-balance"> ${{ account.balance }} </p>
                                     </div>

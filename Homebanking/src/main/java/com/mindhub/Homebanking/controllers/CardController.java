@@ -8,6 +8,7 @@ import com.mindhub.Homebanking.repositories.CardRepository;
 import com.mindhub.Homebanking.repositories.ClientRepository;
 import com.mindhub.Homebanking.services.CardService;
 import com.mindhub.Homebanking.services.ClientService;
+import com.mindhub.Homebanking.utils.CardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+
 @RestController
 @RequestMapping("/api")
 public class CardController {
@@ -29,7 +31,7 @@ public class CardController {
     @Autowired
     private ClientService clientService;
 
-    @RequestMapping(path = "/clients/current/cards", method = RequestMethod.POST)
+    @PostMapping("/clients/current/cards")
     public ResponseEntity <Object> createCard (
             @RequestParam CardColor cardColor,
             @RequestParam CardType cardType,
@@ -63,8 +65,8 @@ public class CardController {
 
             do {
                 // Generate random CVV and card number
-                cvv = generateRandomCVV();
-                cardNumber = generateRandomCardNumber();
+                cvv = CardUtils.generateRandomCVV();
+                cardNumber = CardUtils.generateRandomCardNumber();
 
                 // Check if the generated card number or CVV already exist in the card repository
             } while (cardService.cardExistsByNumber(cardNumber) || cardService.cardExistsByCvv(cvv));
@@ -87,30 +89,5 @@ public class CardController {
 
     }
 
-    //generateRandomCardNumber()
-    //Create a Random object to generate random numbers
-    //Use a StringBuilder to concatenate the parts of the number
-    //Generates 4 groups of 4 random digits (0-9999)
-    //Format each number to 4 digits with leading zeros
-    //Add "-" between each group except the last one
-    //Returns the String result
-    private String generateRandomCardNumber() {
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
 
-        for(int i=0; i<4; i++) {
-            int n = random.nextInt(9999);
-            sb.append(String.format("%04d", n));
-            if(i < 3) {
-                sb.append("-");
-            }
-        }
-
-        return sb.toString();
-    }
-
-    private int generateRandomCVV() {
-        Random random = new Random();
-        return random.nextInt(999);
-    }
 }

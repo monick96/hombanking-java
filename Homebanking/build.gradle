@@ -29,6 +29,10 @@ dependencies {
 	implementation 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+	implementation 'org.apache.pdfbox:pdfbox:+'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	//implementation 'com.itextpdf:itextpdf'
 }
 
 tasks.named('test') {

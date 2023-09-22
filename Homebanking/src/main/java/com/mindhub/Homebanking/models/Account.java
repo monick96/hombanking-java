@@ -18,6 +18,10 @@ public class Account {
     private String number;
     private LocalDate creationDate;
     private double balance;
+    private boolean active = true;
+    @Enumerated(EnumType.STRING)
+    private TypeAccount typeAccount;
+    //where SA is saving account and CA is current account
 
     // The "client" property represents a many-to-one relationship with the "Client" entity.
     // It establishes a connection between an account and the client it belongs to.
@@ -37,10 +41,29 @@ public class Account {
     }
 
     // Constructor with parameters to initialize all attributes
-    public Account(String number, LocalDate creationDate, double balance) {
+    public Account(String number, LocalDate creationDate, double balance, TypeAccount typeAccount,boolean active) {
         this.number = number;
         this.creationDate = creationDate;
         this.balance = balance;
+        this.typeAccount= typeAccount;
+        this.active = active;
+    }
+
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public TypeAccount getTypeAccount() {
+        return typeAccount;
+    }
+
+    public void setTypeAccount(TypeAccount typeAccount) {
+        this.typeAccount = typeAccount;
     }
 
     public Long getId() {

@@ -3,6 +3,7 @@ package com.mindhub.Homebanking.services;
 import com.mindhub.Homebanking.dtos.AccountDTO;
 import com.mindhub.Homebanking.models.Account;
 import com.mindhub.Homebanking.models.Client;
+import com.mindhub.Homebanking.models.TypeAccount;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,5 +24,8 @@ public interface AccountService {
 
     AccountDTO getAccountDTO(Account account);
 
-    Account createAccount(String number, LocalDate creationDate, double balance);
+    Account createAccount(String number, LocalDate creationDate, double balance, TypeAccount typeAccount,boolean active);
+
+    void deactivateAccount(Account account,boolean active);
+
 }

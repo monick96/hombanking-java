@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class TransactionDTO {
     private Long id;
     private TransactionType type; // enum
-    private long amount;
+    private double amount;
     private String description;
     private LocalDateTime date;
 
@@ -32,7 +32,7 @@ public class TransactionDTO {
         return type;
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 

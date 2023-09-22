@@ -11,7 +11,7 @@ public interface ClientLoanService {
 
     List<ClientLoan> getClientLoanByEmailAndLoanName(String email, String loanName);
 
-    ClientLoan createClientLoan( Client client, Loan loan, int payments, long amount);
+    ClientLoan createClientLoan( Client client, Loan loan, int payments, double amount);
 
 
 }

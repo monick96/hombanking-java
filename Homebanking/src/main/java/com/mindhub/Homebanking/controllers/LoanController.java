@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -40,7 +37,7 @@ public class LoanController {
     private TransactionService transactionService;
 
 
-    @RequestMapping(path="/loans")
+    @GetMapping(path="/loans")
     public ResponseEntity<Object>getLoans(Authentication authentication){
 
         // Verify that the user is authenticated
@@ -60,7 +57,7 @@ public class LoanController {
     }
 
     @Transactional
-    @RequestMapping(path="/loans", method= RequestMethod.POST)
+    @PostMapping("/loans")
     public ResponseEntity<Object> createLoan(
             @RequestBody LoanApplicationDTO loanApplicationDTO,
             Authentication authentication) {
@@ -143,7 +140,7 @@ public class LoanController {
         }
 
         //add the total amount requested plus 20% interest
-        long totalAmount = (long) (loanApplicationDTO.getAmount() * 1.20);
+        double totalAmount = (loanApplicationDTO.getAmount() * 1.20);
 
         // Create the loan request
         ClientLoan loanRequest = clientLoanService.createClientLoan(authenticadedClient,loan,loanApplicationDTO.getPayments(),totalAmount);
@@ -152,7 +149,10 @@ public class LoanController {
         authenticadedClient.addClientLoan(loanRequest);
 
         //create a “CREDIT” transaction
-        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,totalAmount,loan.getName() + "Loan approved", LocalDateTime.now());
+        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,loanApplicationDTO.getAmount(),loanRequest.getLoan().getName()+ "Loan approved", LocalDateTime.now());
+
+        //link transaction with account
+        destinationAccount.addTransaction(creditTransaction);
 
         //Update the destination account by adding the requested amount.
         destinationAccount.setBalance(destinationAccount.getBalance() + loanRequest.getAmount());

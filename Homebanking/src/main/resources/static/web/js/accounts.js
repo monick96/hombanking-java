@@ -2,9 +2,14 @@ Vue.createApp({
 
     data() {
         return {
-            clientInfo: {},
+            activeAccounts:{
+            },
+            clientInfo: {
+            },
             errorToats: null,
             errorMsg: null,
+            typeAccount:null,
+
         }
     },
     methods: {
@@ -13,6 +18,10 @@ Vue.createApp({
                 .then((response) => {
                     //get client ifo
                     this.clientInfo = response.data;
+                    this.activeAccounts = this.clientInfo.accounts.filter(account => account.active)
+                    console.log(this.clientInfo);
+                    console.log(this.activeAccounts);
+
                 })
                 .catch((error) => {
                     // handle error
@@ -32,7 +41,7 @@ Vue.createApp({
                 })
         },
         create: function () {
-            axios.post('/api/clients/current/accounts')
+            axios.post('/api/clients/current/accounts',`typeAccount=${this.typeAccount}`)
                 .then(response => window.location.reload())
                 .catch((error) => {
                     this.errorMsg = error.response.data;
@@ -43,5 +52,7 @@ Vue.createApp({
     mounted: function () {
         this.errorToats = new bootstrap.Toast(document.getElementById('danger-toast'));
         this.getData();
+
     }
 }).mount('#app')
+
