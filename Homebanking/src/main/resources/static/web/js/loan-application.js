@@ -65,12 +65,7 @@ Vue.createApp({
                     //console.log(this.loanToConfirm)
 
                     this.modal.show();
-                }else{
-                    this.errorMsg = "Invalid loan type selected";
-                    this.errorToats.show();
-
                 }
-
             }
         },
         apply: function () {

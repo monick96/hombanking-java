@@ -7,6 +7,7 @@ Vue.createApp({
             debitCards: [],
             errorToats: null,
             errorMsg: null,
+            messageDelete:false
         }
     },
     methods: {
@@ -26,6 +27,9 @@ Vue.createApp({
         formatDate: function (date) {
             return new Date(date).toLocaleDateString('en-gb');
         },
+        confirmDeactivateCard: function (){
+
+        },
         signOut: function () {
             axios.post('/api/logout')
                 .then(response => window.location.href = "/web/index.html")
@@ -37,6 +41,7 @@ Vue.createApp({
     },
     mounted: function () {
         this.errorToats = new bootstrap.Toast(document.getElementById('danger-toast'));
+        this.showModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
         this.getData();
     }
 }).mount('#app')
