@@ -79,22 +79,35 @@
                             <h1 class="display-1">{{ clientInfo.firstName }} {{ clientInfo.lastName }}</h1>
                         </div>
                     </div>
+<!--                    <div class="row mt-3">-->
+<!--                        <div class="col">-->
+<!--                            <h2 class="display-6 subtitle">Accounts</h2>-->
+<!--                            <div class="form-group">-->
+<!--                                <label v-if="activeAccounts != null && activeAccounts.length < 3" for="accountType">Account Type:</label>-->
+<!--                                <select v-if="activeAccounts != null && activeAccounts.length < 3" v-model="typeAccount" class="form-control" id="accountType">-->
+<!--                                    <option value="CURRENT_ACCOUNT">Current Account</option>-->
+<!--                                    <option value="SAVING_ACCOUNT">Savings Account</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                            <button v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3"-->
+<!--                                v-on:click="create" id="create" class="btn btn-sm btn-success">Create</button>-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <div class="row mt-3">
                         <div class="col">
                             <h2 class="display-6 subtitle">Accounts</h2>
                             <div class="form-group">
-                                <label v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3" for="accountType">Account Type:</label>
-                                <select v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3" v-model="typeAccount" class="form-control" id="accountType">
-                                    <option value="CURRENT_ACCOUNT">Current Account</option>
-                                    <option value="SAVING_ACCOUNT">Savings Account</option>
+                                <label for="accountType" class="mb-2">Select Account Type:</label>
+                                <select v-if="activeAccounts != null && activeAccounts.length < 3" v-model="typeAccount" class="form-select w-25 mb-2" id="accountType">
+                                    <option value="CURRENT_ACCOUNT" class="w-10">Current Account</option>
+                                    <option value="SAVING_ACCOUNT" class="w-10">Savings Account</option>
                                 </select>
                             </div>
-                            <button v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3"
-                                v-on:click="create" id="create" class="btn btn-sm btn-success">Create</button>
+                            <button v-if="clientInfo.accounts != null && clientInfo.accounts.length < 3" v-on:click="create" id="create" class="btn btn-success mt-2">Create Account</button>
                         </div>
                     </div>
                     <div class="row mx-2">
-                        <div v-for="account in clientInfo.accounts" class="col-12 col-md-4 mt-2 ">
+                        <div v-for="account in activeAccounts" class="col-12 col-md-4 mt-2 ">
                             <a class="account-link" :href="'/web/account.html?id='+account.id">
                                 <div class="card border-0 account">
                                     <div class="card-body">

@@ -18,9 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -381,16 +379,31 @@ public class AccountController {
 
         }
 
-        //delete account transactions
-        //transactionService.deleteTransactions(account.getTransactions());
+        //deactivate account transactions
+        //obtain all transactions associated to account
+        Set<Transaction> transactionSet = account.getTransactions();
 
-        //accountService.deactivateAccount(account,false);
+        //convert transaction set to list
+        List<Transaction> transactionList = new ArrayList<>(transactionSet);
 
+        //if the list of transactions is not empty Iterate through the
+        // transactions and set their "active" status to "false"
+        if (!transactionList.isEmpty()) {
+
+            transactionService.deactivateTransactions(transactionList);
+
+        }
+
+        //save the update transactions
+        transactionService.saveAllTransactions(transactionList);
+
+
+        //deactivate account
         account.setActive(false);
 
         accountService.saveAccount(account);
 
-        return ResponseEntity.ok("Successfully deleted account");
+        return ResponseEntity.ok("Successfully deleted account and transactions");
 
     }
 

@@ -106,7 +106,7 @@
                                     <div class="col">
                                         <label for="amount" class="form-label">Amount</label>
                                         <input id="amount" v-model="amount" type="number" class="form-control"
-                                            placeholder="VIN000554" aria-label="to account">
+                                            placeholder="5000" aria-label="to account">
                                     </div>
                                     <div class="col">
                                         <label class="form-label">Fees</label>
@@ -130,8 +130,18 @@
                         <h5 class="modal-title" id="confirModalLabel">Confirm Loan Application</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        Loans applications cannot be undone, do you want to continue?
+                    <div class="modal-body" v-if="loanToConfirm">
+                        <!-- Shows the loan information to be confirmed -->
+                        <p> <strong>Loan Type:</strong> {{ loanToConfirm.loanType.name }}</p>
+                        <p><strong>Payments:</strong> {{ loanToConfirm.payments }}</p>
+                        <p><strong>To Account Number:</strong> {{ loanToConfirm.accountNumber }}</p>
+                        <p><strong>Amount:</strong> {{ loanToConfirm.amount }}</p>
+
+                        <!-- message about 20% interest -->
+                        <p><strong>Interest Rate: 20%</strong></p>
+                        <p><strong>Total:</strong> {{loanToConfirm.total}}</p>
+
+                        <p>Do you want to continue with this loan application?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Cancel</button>

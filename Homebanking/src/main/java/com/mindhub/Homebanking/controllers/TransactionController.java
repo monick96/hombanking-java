@@ -128,8 +128,8 @@ public class TransactionController {
         }
 
         //create transactions
-        Transaction debitTransaction = transactionService.createTransaction(TransactionType.DEBIT,amount,description + " (DEBIT " + "to " + toAccountNumber + ")", LocalDateTime.now());
-        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,amount,description + " (CREDIT " + "from "+ fromAccountNumber + ")", LocalDateTime.now());
+        Transaction debitTransaction = transactionService.createTransaction(TransactionType.DEBIT,amount,description + " (DEBIT " + "to " + toAccountNumber + ")", LocalDateTime.now(),true);
+        Transaction creditTransaction = transactionService.createTransaction(TransactionType.CREDIT,amount,description + " (CREDIT " + "from "+ fromAccountNumber + ")", LocalDateTime.now(),true);
 
         //link transaction with account
         originAccount.addTransaction(debitTransaction);
@@ -158,7 +158,7 @@ public class TransactionController {
 
         if (cardPayDTO == null) {
 
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("All data must be completed");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("All data must be provided. Please fill in all the required fields.");
 
         }
 
@@ -200,7 +200,7 @@ public class TransactionController {
         // string matches the pattern defined by a regular expression.
         if (!cardNumberMatcher.matches()) {
 
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid card format");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid card format. Please use the format: xxxx-xxxx-xxxx-xxxx");
 
         }
 
@@ -221,14 +221,14 @@ public class TransactionController {
         //verify card expiration date
         if (card.getThruDate().isBefore(currentDate)) {
 
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The card is expired");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The card has expired. Please use a valid card.");
 
         }
 
         ///verify that card have associated de cvv entered
         if (!(card.getNumber().equals(cardPayDTO.getNumber())) || (card.getCvv() != cardPayDTO.getCvv())) {
 
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The data entered does not match");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The entered card number or CVV does not match our records.");
 
         }
 
@@ -242,7 +242,7 @@ public class TransactionController {
 
         if (accountList.isEmpty()) {
 
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("There are no associated accounts");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No active accounts are associated with this card.");
 
         }
 
@@ -256,7 +256,7 @@ public class TransactionController {
         }
 
         //create transaction
-        Transaction payTransaction = transactionService.createTransaction(TransactionType.DEBIT,cardPayDTO.getAmount(),cardPayDTO.getDescription(),LocalDateTime.now());
+        Transaction payTransaction = transactionService.createTransaction(TransactionType.DEBIT,cardPayDTO.getAmount(),cardPayDTO.getDescription(),LocalDateTime.now(),true);
 
         //associated transaction with account
         firstAccount.addTransaction(payTransaction);
@@ -269,7 +269,7 @@ public class TransactionController {
 
         accountService.saveAccount(firstAccount);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Successfully transaction");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Transaction was successful.");
 
     }
 
